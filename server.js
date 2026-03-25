@@ -1,0 +1,75 @@
+const express = require('express');
+const app = express();
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server);
+const path = require('path');
+
+app.use(express.static(__dirname));
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'Login.html'));
+});
+
+app.get('/chat', (req, res) => {
+  res.sendFile(path.join(__dirname, 'Chat.html'));
+});
+
+const PORT = process.env.PORT || 3000;
+const roomUsers = {};
+
+io.on('connection', (socket) => {
+  socket.on('join_room', ({ username, port }) => {
+    if (!username || !port) return;
+    socket.join(port);
+    socket.username = username;
+    socket.port = port;
+    
+    if (!roomUsers[port]) roomUsers[port] = {};
+    roomUsers[port][socket.id] = username;
+    
+    // Broadcast updated users list
+    io.to(port).emit('room_users', Object.values(roomUsers[port]));
+    
+    // System message to others
+    socket.to(port).emit('message', {
+      user: 'System',
+      text: `${username} has joined the secure node.`,
+      time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+    });
+  });
+
+  socket.on('send_message', (data) => {
+    if (!socket.port || !socket.username) return;
+    // Broadcast message to everyone in the room, including sender
+    io.to(socket.port).emit('message', {
+      user: socket.username,
+      text: data.text,
+      time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+    });
+  });
+
+  socket.on('disconnect', () => {
+    if (socket.port && socket.username) {
+      if (roomUsers[socket.port]) {
+        delete roomUsers[socket.port][socket.id];
+        io.to(socket.port).emit('room_users', Object.values(roomUsers[socket.port]));
+        // cleanup empty rooms
+        if (Object.keys(roomUsers[socket.port]).length === 0) {
+          delete roomUsers[socket.port];
+        }
+      }
+      
+      socket.to(socket.port).emit('message', {
+        user: 'System',
+        text: `${socket.username} has left the secure node.`,
+        time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+      });
+    }
+  });
+});
+
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

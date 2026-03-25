@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#B784A7", // Updated to match SCREEN_6 accent color
+                        "primary-container": "#4A223E", // Darker mauve for contrast
+                        "on-primary": "#ffffff",
+                        "on-primary-container": "#F0DCEB",
+                        "secondary": "#9E6D8F", 
+                        "surface": "#000000", // Pure AMOLED black
+                        "surface-container": "#131313",
+                        "surface-container-low": "#0e0e0e",
+                        "surface-container-high": "#1f1f1f",
+                        "surface-container-highest": "#262626",
+                        "on-surface": "#ffffff",
+                        "on-surface-variant": "#ababab",
+                        "outline-variant": "#484848",
+                        "background": "#000000"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem", 
+                        "lg": "0.5rem", 
+                        "xl": "0.75rem", 
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1;
+        }
+        .glass-blur {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #1f1f1f;
+            border-radius: 10px;
+        }
+        body {
+            min-height: max(884px, 100dvh);
+            background-color: #000000;
+        }
+        .mauve-glow {
+            box-shadow: 0 0 24px rgba(183, 132, 167, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-black text-on-surface font-body selection:bg-primary/30 selection:text-white overflow-hidden">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#000000]/80 backdrop-blur-xl flex justify-between items-center px-6 h-20 shadow-[0_4px_20px_rgba(183,132,167,0.04)]">
+<div class="flex items-center gap-4">
+<button id="menu-btn" class="text-[#ababab] hover:bg-[#1f1f1f] transition-colors p-2 rounded-full active:scale-95 duration-200">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="flex items-center gap-3">
+<div>
+<h1 id="header-title" class="font-headline font-bold tracking-tight text-lg text-white">Secure Node</h1>
+<p id="header-subtitle" class="text-[10px] text-primary uppercase tracking-widest font-bold">Connecting...</p>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button id="exit-btn" class="text-[#ababab] hover:text-error hover:bg-[#1f1f1f] transition-colors p-2 rounded-full active:scale-95 duration-200">
+<span class="material-symbols-outlined">logout</span>
+</button>
+<button id="clear-chat-btn" title="Clear Chat" class="text-[#ababab] hover:text-error hover:bg-[#1f1f1f] transition-colors p-2 rounded-full active:scale-95 duration-200">
+<span class="material-symbols-outlined">delete_sweep</span>
+</button>
+</div>
+</header>
+<!-- Sidebar Drawer -->
+<div id="users-sidebar" class="fixed inset-y-0 left-0 w-64 bg-surface-container-highest z-[60] transform -translate-x-full transition-transform duration-300 shadow-2xl flex flex-col">
+    <div class="p-6 flex items-center justify-between border-b border-outline-variant/20 h-20">
+        <h2 class="font-headline font-bold text-lg text-white">Online</h2>
+        <button id="close-sidebar-btn" class="text-[#ababab] hover:text-white transition-colors">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+    <div class="p-6 flex-1 overflow-y-auto w-full custom-scrollbar">
+        <ul id="users-list" class="space-y-4">
+        </ul>
+    </div>
+</div>
+<!-- Sidebar Overlay -->
+<div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-[55] hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm"></div>
+<!-- Main Chat Canvas -->
+<main id="chat-messages-container" class="h-screen pt-24 pb-32 overflow-y-auto px-6 space-y-8 custom-scrollbar bg-black">
+</main>
+<!-- Bottom Input Area -->
+<footer class="fixed bottom-0 w-full z-50 px-6 pb-8 bg-gradient-to-t from-black via-black/90 to-transparent pt-12">
+<div class="flex items-center gap-3">
+<div class="flex-1 flex items-center bg-surface-container-high rounded-[28px] px-4 min-h-[56px] border border-outline-variant/20 focus-within:bg-surface-container-highest transition-all group py-2">
+<textarea id="message-input" class="bg-transparent border-none focus:ring-0 text-on-surface placeholder:text-on-surface-variant w-full px-3 text-[15px] resize-none overflow-hidden py-2" placeholder="Message..." rows="1" autocomplete="off"></textarea>
+<div class="flex items-center gap-3 pr-1">
+<label id="image-btn" title="Upload Image" class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer relative overflow-hidden flex items-center">
+<span class="material-symbols-outlined">image</span>
+<input type="file" id="image-upload" title="Upload Image" accept="image/*" class="absolute inset-0 w-[200%] h-[200%] -top-4 -left-4 opacity-0 cursor-pointer" />
+</label>
+</div>
+</div>
+<button id="send-button" class="w-14 h-14 rounded-full bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-white mauve-glow active:scale-90 transition-transform">
+<span class="material-symbols-outlined filled text-2xl">send</span>
+</button>
+</div>
+</footer>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const username = urlParams.get('username');
+    const port = urlParams.get('port');
+
+    if (!username || !port) {
+        window.location.href = '/';
+    }
+
+    document.getElementById('header-title').innerText = `Port: ${port}`;
+    document.getElementById('header-subtitle').innerText = 'Active Node';
+
+    const socket = io();
+    socket.emit('join_room', { username, port });
+
+    const chatContainer = document.getElementById('chat-messages-container');
+    const messageInput = document.getElementById('message-input');
+    const sendButton = document.getElementById('send-button');
+
+    function createSystemMessage(text) {
+        const div = document.createElement('div');
+        div.className = 'flex justify-center my-4';
+        div.innerHTML = `<span class="text-[10px] font-bold tracking-[0.2em] text-on-surface-variant uppercase bg-surface-container px-4 py-1.5 rounded-full">${text}</span>`;
+        return div;
+    }
+
+    function createOtherMessage(user, text, time) {
+        const div = document.createElement('div');
+        div.className = 'flex flex-col gap-1.5 max-w-[80%] items-start';
+        div.innerHTML = `
+            <span class="text-[10px] text-primary ml-1 block font-bold">${user}</span>
+            <div class="bg-surface-container-highest text-on-surface px-4 py-3 rounded-tr-xl rounded-br-xl rounded-bl-xl rounded-tl-sm">
+                <p class="text-[15px] leading-relaxed break-all whitespace-pre-wrap">${text}</p>
+            </div>
+            <span class="text-[10px] text-on-surface-variant mt-1 ml-1">${time}</span>
+        `;
+        return div;
+    }
+
+    function createUserMessage(text, time) {
+        const div = document.createElement('div');
+        div.className = 'flex flex-col gap-1.5 max-w-[80%] items-end ml-auto';
+        div.innerHTML = `
+            <div class="bg-primary text-white px-4 py-3 rounded-tl-xl rounded-bl-xl rounded-br-sm rounded-tr-xl shadow-[0_0_20px_rgba(183,132,167,0.1)]">
+                <p class="text-[15px] font-medium leading-relaxed break-all whitespace-pre-wrap">${text}</p>
+            </div>
+            <div class="flex items-center gap-1.5 mt-1 mr-1">
+                <span class="text-[10px] text-on-surface-variant">${time}</span>
+                <span class="material-symbols-outlined text-[12px] text-primary" style="font-variation-settings: 'FILL' 1;">done_all</span>
+            </div>
+        `;
+        return div;
+    }
+
+    function createTypingIndicator(user) {
+        const div = document.createElement('div');
+        div.id = `typing-${user}`;
+        div.className = 'flex items-center gap-2 px-1 mb-4';
+        div.innerHTML = `
+            <div class="flex gap-1 items-center bg-surface-container-low px-3 py-2 rounded-full">
+            <span class="text-[10px] text-primary mr-2">${user}</span>
+            <div class="w-1.5 h-1.5 bg-primary rounded-full animate-bounce"></div>
+            <div class="w-1.5 h-1.5 bg-primary/60 rounded-full animate-bounce [animation-delay:0.2s] ml-1"></div>
+            <div class="w-1.5 h-1.5 bg-primary/30 rounded-full animate-bounce [animation-delay:0.4s] ml-1"></div>
+            </div>
+        `;
+        return div;
+    }
+
+    const scrollToBottom = () => {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    };
+
+    socket.on('message', (data) => {
+        const tyepingEl = document.getElementById(`typing-${data.user}`);
+        if(tyepingEl) tyepingEl.remove();
+
+        if (data.user === 'System') {
+            chatContainer.appendChild(createSystemMessage(data.text));
+        } else if (data.user === username) {
+            chatContainer.appendChild(createUserMessage(data.text, data.time));
+        } else {
+            chatContainer.appendChild(createOtherMessage(data.user, data.text, data.time));
+        }
+        scrollToBottom();
+    });
+
+    socket.on('room_users', (users) => {
+        const list = document.getElementById('users-list');
+        list.innerHTML = '';
+        users.forEach(user => {
+            const li = document.createElement('li');
+            li.className = 'flex items-center gap-3 text-sm text-on-surface';
+            li.innerHTML = `
+                <div class="w-2 h-2 rounded-full bg-primary/80 shadow-[0_0_8px_rgba(183,132,167,0.6)]"></div>
+                ${user} ${user === username ? '<span class="text-on-surface-variant text-[10px] uppercase ml-1">(You)</span>' : ''}
+            `;
+            list.appendChild(li);
+        });
+        document.getElementById('header-subtitle').innerText = `${users.length} Online`;
+    });
+
+    socket.on('typing', ({ username: typer, isTyping }) => {
+        if(typer === username) return;
+        let indicator = document.getElementById(`typing-${typer}`);
+        if(isTyping && !indicator) {
+            chatContainer.appendChild(createTypingIndicator(typer));
+            scrollToBottom();
+        } else if(!isTyping && indicator) {
+            indicator.remove();
+        }
+    });
+
+    // Sub-menus
+    const sidebar = document.getElementById('users-sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    document.getElementById('menu-btn').addEventListener('click', () => {
+        sidebar.classList.remove('-translate-x-full');
+        overlay.classList.remove('hidden');
+        setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+    });
+
+    function closeSidebar() {
+        sidebar.classList.add('-translate-x-full');
+        overlay.classList.add('opacity-0');
+        setTimeout(() => overlay.classList.add('hidden'), 300);
+    }
+    document.getElementById('close-sidebar-btn').addEventListener('click', closeSidebar);
+    overlay.addEventListener('click', closeSidebar);
+
+    document.getElementById('exit-btn').addEventListener('click', () => window.location.href = '/');
+
+    document.getElementById('clear-chat-btn').addEventListener('click', () => {
+        if(confirm('Clear message history from your view?')) chatContainer.innerHTML = '';
+    });
+
+
+
+    document.getElementById('image-upload').addEventListener('change', function() {
+        if(this.files && this.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                socket.emit('send_message', { text: `<img src="${e.target.result}" class="max-w-xs rounded-md mt-2 border border-outline-variant/30" />` });
+            }
+            reader.readAsDataURL(this.files[0]);
+            this.value = ''; 
+        }
+    });
+
+    let typingTimer;
+    messageInput.addEventListener('input', () => {
+        // Auto-resize textarea
+        messageInput.style.height = 'auto';
+        messageInput.style.height = messageInput.scrollHeight + 'px';
+        
+        socket.emit('typing', true);
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(() => socket.emit('typing', false), 2000);
+    });
+
+    function resetInput() {
+        messageInput.value = '';
+        messageInput.style.height = 'auto';
+        socket.emit('typing', false);
+    }
+
+    function sendMessage() {
+        const text = messageInput.value.trim();
+        if (text) {
+            socket.emit('send_message', { text });
+            resetInput();
+        }
+    }
+
+    sendButton.addEventListener('click', sendMessage);
+
+
+</script>
+</body></html>
