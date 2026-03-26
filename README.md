@@ -76,4 +76,4 @@ Orka uses a curated dark-mode palette:
 
 ---
 
-&copy; 2026 Orka Protocol. Secured communication for the modern age.
+&copy; 2026 Orka. A product by Anurag Roy.
