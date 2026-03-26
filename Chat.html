@@ -85,6 +85,12 @@
         .bubble-context-menu {
             transition: opacity 0.15s, transform 0.15s;
         }
+        * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
     </style>
 </head>
 <body class="bg-black text-on-surface font-body selection:bg-primary/30 selection:text-white overflow-hidden">
@@ -136,16 +142,34 @@
     <img id="modal-img" class="max-w-full max-h-full object-contain rounded-xl shadow-2xl scale-95 transition-transform duration-300 pointer-events-none" alt="Full screen preview" src="" />
 </div>
 <!-- Context Menu -->
-<div id="context-menu" class="fixed z-[100] hidden flex flex-col bg-surface-container-highest/95 backdrop-blur-xl border border-outline-variant/30 rounded-2xl shadow-2xl p-1 w-40 opacity-0 scale-95 origin-top-left bubble-context-menu">
-    <button onclick="handleReplyAction()" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-white hover:bg-white/10 rounded-xl transition-colors">
+<div id="context-menu" class="fixed z-[100] hidden flex flex-col bg-surface-container-highest/95 backdrop-blur-xl border border-outline-variant/30 rounded-2xl shadow-2xl p-1 w-44 opacity-0 scale-95 origin-top-left bubble-context-menu">
+    <button onclick="handleReplyAction()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-white hover:bg-white/10 rounded-xl transition-colors">
         <span class="material-symbols-outlined text-lg">reply</span> Reply
     </button>
-    <button id="unsend-btn" onclick="handleUnsendAction()" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors">
+    <button onclick="handleCopyAction()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-white hover:bg-white/10 rounded-xl transition-colors">
+        <span class="material-symbols-outlined text-lg text-white/70">content_copy</span> Copy
+    </button>
+    <button id="edit-btn" onclick="handleEditAction()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-white hover:bg-white/10 rounded-xl transition-colors">
+        <span class="material-symbols-outlined text-lg text-white/70">edit</span> Edit
+    </button>
+    <div class="h-[1px] bg-white/5 my-1 mx-2"></div>
+    <button id="unsend-btn" onclick="handleUnsendAction()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors">
         <span class="material-symbols-outlined text-lg">delete</span> Unsend
     </button>
 </div>
 <!-- Bottom Input Area -->
 <footer class="sticky bottom-0 w-full z-50 px-6 pb-6 bg-black shrink-0">
+<div id="edit-preview-bar" class="hidden mb-3 bg-primary/10 rounded-2xl border border-primary/20 overflow-hidden reply-preview-animate">
+    <div class="flex items-center gap-3 px-4 py-3 border-l-4 border-primary">
+        <div class="flex-1 min-w-0">
+            <p class="text-[10px] font-bold text-primary uppercase tracking-wider mb-0.5">Editing Message</p>
+            <p id="edit-text" class="text-[13px] text-on-surface-variant truncate"></p>
+        </div>
+        <button onclick="cancelEdit()" class="text-[#ababab] hover:text-white p-1">
+            <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+    </div>
+</div>
 <div id="reply-preview-bar" class="hidden mb-3 bg-surface-container-high rounded-2xl border border-outline-variant/20 overflow-hidden reply-preview-animate">
     <div class="flex items-center gap-3 px-4 py-3 border-l-4 border-primary">
         <div class="flex-1 min-w-0">
@@ -168,7 +192,7 @@
 </div>
 </div>
 <button id="send-button" class="w-14 h-14 rounded-full bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-white mauve-glow active:scale-90 transition-transform">
-<span class="material-symbols-outlined filled text-2xl">send</span>
+<span id="send-btn-icon" class="material-symbols-outlined filled text-2xl">send</span>
 </button>
 </div>
 </footer>
@@ -330,6 +354,20 @@
         }
     });
 
+    socket.on('edit_message', ({ id, text }) => {
+        const el = document.getElementById(`msg-${id}`);
+        if(el) {
+            const p = el.querySelector('.bubble-content p');
+            if(p) {
+                p.innerText = text;
+                const timeContainer = el.querySelector('.bubble-content span.text-[9px]');
+                if(timeContainer && !timeContainer.innerText.includes('(edited)')) {
+                    timeContainer.innerText += ' (edited)';
+                }
+            }
+        }
+    });
+
     socket.on('room_users', (users) => {
         const list = document.getElementById('users-list');
         list.innerHTML = '';
@@ -395,11 +433,14 @@
         selectedMsgId = el.getAttribute('data-msg-id');
         const msgUser = el.getAttribute('data-user');
         const unsendBtn = document.getElementById('unsend-btn');
+        const editBtn = document.getElementById('edit-btn');
+        const isImage = el.classList.contains('bg-surface-container-low/30') || el.classList.contains('bg-primary/20');
         
-        // Only show unsend for own messages
+        // Only show unsend and edit for own messages
         unsendBtn.classList.toggle('hidden', msgUser !== username);
+        editBtn.classList.toggle('hidden', msgUser !== username || isImage);
         
-        contextMenu.style.left = `${Math.min(e.pageX, window.innerWidth - 170)}px`;
+        contextMenu.style.left = `${Math.min(e.pageX, window.innerWidth - 180)}px`;
         contextMenu.style.top = `${e.pageY}px`;
         contextMenu.classList.remove('hidden');
         setTimeout(() => {
@@ -415,23 +456,43 @@
     window.addEventListener('click', hideContextMenu);
     window.addEventListener('scroll', hideContextMenu, true);
 
-    function handleReplyAction() {
+    function handleCopyAction() {
         const msgEl = document.getElementById(`msg-${selectedMsgId}`);
-        const user = msgEl.querySelector('.bubble-content').getAttribute('data-user');
-        const textArea = msgEl.querySelector('.bubble-content p');
-        const text = textArea ? textArea.innerText : '📷 Photo';
-        
-        currentReplyTo = { id: selectedMsgId, user, text };
-        
-        document.getElementById('reply-user').innerText = user === username ? 'You' : user;
-        document.getElementById('reply-text').innerText = text;
-        replyPreviewBar.classList.remove('hidden');
-        messageInput.focus();
+        const p = msgEl.querySelector('.bubble-content p');
+        if(p) {
+            navigator.clipboard.writeText(p.innerText).then(() => {
+                // Optional: show toast
+            });
+        }
     }
 
-    function cancelReply() {
-        currentReplyTo = null;
-        replyPreviewBar.classList.add('hidden');
+    let isEditing = false;
+    let editingMsgId = null;
+
+    function handleEditAction() {
+        const msgEl = document.getElementById(`msg-${selectedMsgId}`);
+        const p = msgEl.querySelector('.bubble-content p');
+        if(p) {
+            isEditing = true;
+            editingMsgId = selectedMsgId;
+            messageInput.value = p.innerText;
+            document.getElementById('edit-text').innerText = p.innerText;
+            document.getElementById('edit-preview-bar').classList.remove('hidden');
+            document.getElementById('send-btn-icon').innerText = 'check';
+            cancelReply();
+            messageInput.focus();
+            messageInput.style.height = 'auto';
+            messageInput.style.height = messageInput.scrollHeight + 'px';
+        }
+    }
+
+    function cancelEdit() {
+        isEditing = false;
+        editingMsgId = null;
+        messageInput.value = '';
+        messageInput.style.height = 'auto';
+        document.getElementById('edit-preview-bar').classList.add('hidden');
+        document.getElementById('send-btn-icon').innerText = 'send';
     }
 
     function handleUnsendAction() {
@@ -439,6 +500,10 @@
             socket.emit('delete_message', selectedMsgId);
         }
     }
+
+    document.addEventListener('copy', (e) => {
+        e.preventDefault();
+    });
 
     // Long press support for mobile
     document.addEventListener('touchstart', (e) => {
@@ -517,20 +582,31 @@
         messageInput.value = '';
         messageInput.style.height = 'auto';
         socket.emit('typing', false);
+        cancelEdit();
+        cancelReply();
+        messageInput.focus();
     }
 
     function sendMessage() {
         const text = messageInput.value.trim();
         if (text) {
-            socket.emit('send_message', { 
-                text,
-                replyTo: currentReplyTo 
-            });
+            if (isEditing) {
+                socket.emit('edit_message', { id: editingMsgId, text });
+                cancelEdit();
+            } else {
+                socket.emit('send_message', { 
+                    text,
+                    replyTo: currentReplyTo 
+                });
+            }
             resetInput();
-            cancelReply();
         }
     }
 
+    sendButton.addEventListener('mousedown', (e) => {
+        // Prevent button from taking focus which hides mobile keyboard
+        e.preventDefault();
+    });
     sendButton.addEventListener('click', sendMessage);
 
     // Handle mobile viewport resizing explicitly for older browsers

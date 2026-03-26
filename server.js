@@ -57,6 +57,11 @@ io.on('connection', (socket) => {
     io.to(socket.port).emit('delete_message', messageId);
   });
 
+  socket.on('edit_message', ({ id, text }) => {
+    if (!socket.port) return;
+    io.to(socket.port).emit('edit_message', { id, text });
+  });
+
   socket.on('typing', (isTyping) => {
     if (!socket.port || !socket.username) return;
     socket.to(socket.port).emit('typing', { username: socket.username, isTyping });
