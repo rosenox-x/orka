@@ -44,10 +44,22 @@ io.on('connection', (socket) => {
     if (!socket.port || !socket.username) return;
     // Broadcast message to everyone in the room, including sender
     io.to(socket.port).emit('message', {
+      id: Date.now() + Math.random().toString(36).substr(2, 9),
       user: socket.username,
       text: data.text,
-      time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+      time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+      replyTo: data.replyTo || null // Support for replies
     });
+  });
+
+  socket.on('delete_message', (messageId) => {
+    if (!socket.port) return;
+    io.to(socket.port).emit('delete_message', messageId);
+  });
+
+  socket.on('typing', (isTyping) => {
+    if (!socket.port || !socket.username) return;
+    socket.to(socket.port).emit('typing', { username: socket.username, isTyping });
   });
 
   socket.on('disconnect', () => {

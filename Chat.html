@@ -2,7 +2,7 @@
 
 <html class="dark" lang="en"><head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" name="viewport"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -64,17 +64,32 @@
             border-radius: 10px;
         }
         body {
-            min-height: max(884px, 100dvh);
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
             background-color: #000000;
         }
         .mauve-glow {
             box-shadow: 0 0 24px rgba(183, 132, 167, 0.3);
         }
+        @keyframes typingFadeIn {
+            from { opacity: 0; transform: translateY(4px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .typing-indicator-animate {
+            animation: typingFadeIn 0.2s cubic-bezier(0, 0, 0.2, 1) forwards;
+        }
+        .reply-preview-animate {
+            animation: typingFadeIn 0.2s cubic-bezier(0, 0, 0.2, 1) forwards;
+        }
+        .bubble-context-menu {
+            transition: opacity 0.15s, transform 0.15s;
+        }
     </style>
 </head>
 <body class="bg-black text-on-surface font-body selection:bg-primary/30 selection:text-white overflow-hidden">
 <!-- TopAppBar -->
-<header class="fixed top-0 w-full z-50 bg-[#000000]/80 backdrop-blur-xl flex justify-between items-center px-6 h-20 shadow-[0_4px_20px_rgba(183,132,167,0.04)]">
+<header class="sticky top-0 w-full z-50 bg-[#000000]/80 backdrop-blur-xl flex justify-between items-center px-6 h-20 shrink-0 shadow-[0_4px_20px_rgba(183,132,167,0.04)]">
 <div class="flex items-center gap-4">
 <button id="menu-btn" class="text-[#ababab] hover:bg-[#1f1f1f] transition-colors p-2 rounded-full active:scale-95 duration-200">
 <span class="material-symbols-outlined">menu</span>
@@ -111,17 +126,44 @@
 <!-- Sidebar Overlay -->
 <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-[55] hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm"></div>
 <!-- Main Chat Canvas -->
-<main id="chat-messages-container" class="h-screen pt-24 pb-32 overflow-y-auto px-6 space-y-8 custom-scrollbar bg-black">
+<main id="chat-messages-container" class="flex-1 overflow-y-auto px-6 py-6 custom-scrollbar bg-black flex flex-col">
 </main>
+<!-- Image Preview Modal -->
+<div id="image-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/95 backdrop-blur-xl transition-all duration-300 opacity-0 p-4">
+    <button id="close-modal" class="absolute top-6 right-6 text-white/70 hover:text-white p-2 rounded-full bg-white/10 active:scale-95 transition-all z-[110]">
+        <span class="material-symbols-outlined text-3xl">close</span>
+    </button>
+    <img id="modal-img" class="max-w-full max-h-full object-contain rounded-xl shadow-2xl scale-95 transition-transform duration-300 pointer-events-none" alt="Full screen preview" src="" />
+</div>
+<!-- Context Menu -->
+<div id="context-menu" class="fixed z-[100] hidden flex flex-col bg-surface-container-highest/95 backdrop-blur-xl border border-outline-variant/30 rounded-2xl shadow-2xl p-1 w-40 opacity-0 scale-95 origin-top-left bubble-context-menu">
+    <button onclick="handleReplyAction()" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-white hover:bg-white/10 rounded-xl transition-colors">
+        <span class="material-symbols-outlined text-lg">reply</span> Reply
+    </button>
+    <button id="unsend-btn" onclick="handleUnsendAction()" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors">
+        <span class="material-symbols-outlined text-lg">delete</span> Unsend
+    </button>
+</div>
 <!-- Bottom Input Area -->
-<footer class="fixed bottom-0 w-full z-50 px-6 pb-8 bg-gradient-to-t from-black via-black/90 to-transparent pt-12">
+<footer class="sticky bottom-0 w-full z-50 px-6 pb-6 bg-black shrink-0">
+<div id="reply-preview-bar" class="hidden mb-3 bg-surface-container-high rounded-2xl border border-outline-variant/20 overflow-hidden reply-preview-animate">
+    <div class="flex items-center gap-3 px-4 py-3 border-l-4 border-primary">
+        <div class="flex-1 min-w-0">
+            <p id="reply-user" class="text-[10px] font-bold text-primary uppercase tracking-wider mb-0.5">Alice</p>
+            <p id="reply-text" class="text-[13px] text-on-surface-variant truncate">How are you doing?</p>
+        </div>
+        <button onclick="cancelReply()" class="text-[#ababab] hover:text-white p-1">
+            <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+    </div>
+</div>
 <div class="flex items-center gap-3">
 <div class="flex-1 flex items-center bg-surface-container-high rounded-[28px] px-4 min-h-[56px] border border-outline-variant/20 focus-within:bg-surface-container-highest transition-all group py-2">
 <textarea id="message-input" class="bg-transparent border-none focus:ring-0 text-on-surface placeholder:text-on-surface-variant w-full px-3 text-[15px] resize-none overflow-hidden py-2" placeholder="Message..." rows="1" autocomplete="off"></textarea>
 <div class="flex items-center gap-3 pr-1">
 <label id="image-btn" title="Upload Image" class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer relative overflow-hidden flex items-center">
 <span class="material-symbols-outlined">image</span>
-<input type="file" id="image-upload" title="Upload Image" accept="image/*" class="absolute inset-0 w-[200%] h-[200%] -top-4 -left-4 opacity-0 cursor-pointer" />
+<input type="file" id="image-upload" title="Upload Image" alt="Choose image" accept="image/*" class="absolute inset-0 w-[200%] h-[200%] -top-4 -left-4 opacity-0 cursor-pointer" />
 </label>
 </div>
 </div>
@@ -152,34 +194,83 @@
 
     function createSystemMessage(text) {
         const div = document.createElement('div');
-        div.className = 'flex justify-center my-4';
+        div.className = 'flex justify-center my-6';
         div.innerHTML = `<span class="text-[10px] font-bold tracking-[0.2em] text-on-surface-variant uppercase bg-surface-container px-4 py-1.5 rounded-full">${text}</span>`;
         return div;
     }
 
-    function createOtherMessage(user, text, time) {
+    function createOtherMessage(msg, isConsecutive) {
+        const { id, user, text, time, replyTo } = msg;
         const div = document.createElement('div');
-        div.className = 'flex flex-col gap-1.5 max-w-[80%] items-start';
+        const isImage = text.includes('<img');
+        div.id = `msg-${id}`;
+        div.className = `flex flex-col ${isImage ? 'max-w-[280px]' : 'max-w-[85%]'} items-start ${isConsecutive ? 'mt-1' : 'mt-6'}`;
+        const bubbleRounding = isConsecutive ? 'rounded-2xl' : 'rounded-2xl rounded-tl-sm';
+        
         div.innerHTML = `
-            <span class="text-[10px] text-primary ml-1 block font-bold">${user}</span>
-            <div class="bg-surface-container-highest text-on-surface px-4 py-3 rounded-tr-xl rounded-br-xl rounded-bl-xl rounded-tl-sm">
-                <p class="text-[15px] leading-relaxed break-all whitespace-pre-wrap">${text}</p>
+            ${!isConsecutive ? `<span class="text-[10px] text-primary ml-1 mb-1.5 block font-bold transition-all">${user}</span>` : ''}
+            ${replyTo ? `
+                <div class="cursor-pointer bg-white/5 border-l-2 border-primary ml-1 mb-1 px-3 py-2 rounded-r-lg max-w-full opacity-90 shadow-sm hover:bg-white/10 transition-colors" onclick="scrollToMessage('${replyTo.id}')">
+                    <p class="text-[10px] font-bold text-primary uppercase tracking-wider flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[12px]">reply</span> 
+                        ${replyTo.user === username ? 'You' : replyTo.user}
+                    </p>
+                    <p class="text-[11px] truncate text-on-surface-variant/90">${replyTo.text.includes('<img') ? '📷 Photo' : replyTo.text}</p>
+                </div>
+            ` : ''}
+            <div data-msg-id="${id}" data-user="${user}" oncontextmenu="showContextMenu(event, this)" onlongpress="showContextMenu(event, this)" class="bubble-content ${isImage ? 'bg-surface-container-low/30 relative' : 'bg-surface-container-highest text-on-surface px-4 pt-3 pb-2'} ${bubbleRounding} overflow-hidden shadow-sm min-w-[70px]">
+                ${isImage ? `
+                    <div class="cursor-pointer active:scale-[0.98] transition-all" onclick="openImageModal(this.querySelector('img').src)">
+                        ${text.replace('<img', `<img class="w-full max-h-[320px] object-contain bg-black/20 block" `)}
+                        <div class="absolute bottom-1.5 right-1.5 h-4.5 px-2 bg-black/50 backdrop-blur-md rounded-full flex items-center">
+                            <span class="text-[9px] text-white/90 font-medium tabular-nums uppercase tracking-wider leading-none">${time}</span>
+                        </div>
+                    </div>
+                ` : `
+                    <p class="text-[15px] leading-relaxed break-all whitespace-pre-wrap">${text}</p>
+                    <div class="flex justify-end mt-1 opacity-40">
+                        <span class="text-[9px] font-medium tabular-nums uppercase">${time}</span>
+                    </div>
+                `}
             </div>
-            <span class="text-[10px] text-on-surface-variant mt-1 ml-1">${time}</span>
         `;
         return div;
     }
 
-    function createUserMessage(text, time) {
+    function createUserMessage(msg, isConsecutive) {
+        const { id, user, text, time, replyTo } = msg;
         const div = document.createElement('div');
-        div.className = 'flex flex-col gap-1.5 max-w-[80%] items-end ml-auto';
+        const isImage = text.includes('<img');
+        div.id = `msg-${id}`;
+        div.className = `flex flex-col ${isImage ? 'max-w-[280px]' : 'max-w-[85%]'} items-end ml-auto ${isConsecutive ? 'mt-1' : 'mt-6'}`;
+        const bubbleRounding = isConsecutive ? 'rounded-2xl' : 'rounded-2xl rounded-tr-sm';
+
         div.innerHTML = `
-            <div class="bg-primary text-white px-4 py-3 rounded-tl-xl rounded-bl-xl rounded-br-sm rounded-tr-xl shadow-[0_0_20px_rgba(183,132,167,0.1)]">
-                <p class="text-[15px] font-medium leading-relaxed break-all whitespace-pre-wrap">${text}</p>
-            </div>
-            <div class="flex items-center gap-1.5 mt-1 mr-1">
-                <span class="text-[10px] text-on-surface-variant">${time}</span>
-                <span class="material-symbols-outlined text-[12px] text-primary" style="font-variation-settings: 'FILL' 1;">done_all</span>
+            ${replyTo ? `
+                <div class="cursor-pointer bg-white/5 border-r-2 border-white/30 mr-1 mb-1 px-3 py-2 rounded-l-lg max-w-full text-right opacity-90 shadow-sm hover:bg-white/10 transition-colors" onclick="scrollToMessage('${replyTo.id}')">
+                    <p class="text-[10px] font-bold text-white/80 uppercase tracking-wider flex items-center justify-end gap-1">
+                        ${replyTo.user === username ? 'You' : replyTo.user}
+                        <span class="material-symbols-outlined text-[12px]">reply</span>
+                    </p>
+                    <p class="text-[11px] truncate text-white/60">${replyTo.text.includes('<img') ? '📷 Photo' : replyTo.text}</p>
+                </div>
+            ` : ''}
+            <div data-msg-id="${id}" data-user="${user}" oncontextmenu="showContextMenu(event, this)" onlongpress="showContextMenu(event, this)" class="bubble-content ${isImage ? 'bg-primary/20 relative' : 'bg-primary text-white px-4 pt-3 pb-2'} ${bubbleRounding} overflow-hidden shadow-[0_4px_16px_rgba(183,132,167,0.1)] min-w-[85px]">
+                ${isImage ? `
+                    <div class="cursor-pointer active:scale-[0.98] transition-all" onclick="openImageModal(this.querySelector('img').src)">
+                        ${text.replace('<img', `<img class="w-full max-h-[320px] object-contain bg-black/20 block" `)}
+                        <div class="absolute bottom-1.5 right-1.5 h-4.5 px-2 bg-black/50 backdrop-blur-md rounded-full flex items-center gap-1.5">
+                            <span class="text-[9px] text-white/90 font-medium tabular-nums uppercase tracking-wider leading-none">${time}</span>
+                            <span class="material-symbols-outlined text-[11px] text-primary" style="font-variation-settings: 'FILL' 1;">done_all</span>
+                        </div>
+                    </div>
+                ` : `
+                    <p class="text-[15px] font-medium leading-relaxed break-all whitespace-pre-wrap">${text}</p>
+                    <div class="flex justify-end items-center gap-1.5 mt-1">
+                        <span class="text-[9px] text-white/70 font-medium tabular-nums uppercase">${time}</span>
+                        <span class="material-symbols-outlined text-[13px] text-white/80" style="font-variation-settings: 'FILL' 1;">done_all</span>
+                    </div>
+                `}
             </div>
         `;
         return div;
@@ -188,13 +279,15 @@
     function createTypingIndicator(user) {
         const div = document.createElement('div');
         div.id = `typing-${user}`;
-        div.className = 'flex items-center gap-2 px-1 mb-4';
+        div.className = 'flex items-center gap-2 px-1 mb-6 mt-4 typing-indicator-animate';
         div.innerHTML = `
-            <div class="flex gap-1 items-center bg-surface-container-low px-3 py-2 rounded-full">
-            <span class="text-[10px] text-primary mr-2">${user}</span>
-            <div class="w-1.5 h-1.5 bg-primary rounded-full animate-bounce"></div>
-            <div class="w-1.5 h-1.5 bg-primary/60 rounded-full animate-bounce [animation-delay:0.2s] ml-1"></div>
-            <div class="w-1.5 h-1.5 bg-primary/30 rounded-full animate-bounce [animation-delay:0.4s] ml-1"></div>
+            <div class="flex gap-2.5 items-center bg-surface-container-low/50 border border-outline-variant/10 px-4 py-2.5 rounded-full backdrop-blur-sm">
+            <span class="text-[10px] text-primary/90 font-bold uppercase tracking-wider">${user} is typing</span>
+            <div class="flex gap-1.5 items-center ml-1">
+                <div class="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-duration:1s]"></div>
+                <div class="w-1.5 h-1.5 bg-primary/60 rounded-full animate-bounce [animation-duration:1s] [animation-delay:0.15s]"></div>
+                <div class="w-1.5 h-1.5 bg-primary/30 rounded-full animate-bounce [animation-duration:1s] [animation-delay:0.3s]"></div>
+            </div>
             </div>
         `;
         return div;
@@ -204,18 +297,37 @@
         chatContainer.scrollTop = chatContainer.scrollHeight;
     };
 
+    let lastSender = null;
+
     socket.on('message', (data) => {
-        const tyepingEl = document.getElementById(`typing-${data.user}`);
-        if(tyepingEl) tyepingEl.remove();
+        const typingEl = document.getElementById(`typing-${data.user}`);
+        if(typingEl) typingEl.remove();
+
+        const isConsecutive = (data.user === lastSender && data.user !== 'System');
+        lastSender = data.user;
 
         if (data.user === 'System') {
             chatContainer.appendChild(createSystemMessage(data.text));
         } else if (data.user === username) {
-            chatContainer.appendChild(createUserMessage(data.text, data.time));
+            chatContainer.appendChild(createUserMessage(data, isConsecutive));
         } else {
-            chatContainer.appendChild(createOtherMessage(data.user, data.text, data.time));
+            chatContainer.appendChild(createOtherMessage(data, isConsecutive));
         }
         scrollToBottom();
+    });
+
+    socket.on('delete_message', (id) => {
+        const el = document.getElementById(`msg-${id}`);
+        if(el) {
+            const content = el.querySelector('.bubble-content');
+            if(content) {
+                content.innerHTML = '<p class="text-[12px] italic opacity-50 flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">block</span> This message was unsent</p>';
+                content.classList.add('opacity-40');
+                content.style.backgroundImage = 'none';
+                content.style.backgroundColor = 'transparent';
+                content.style.border = '1px dashed rgba(255,255,255,0.1)';
+            }
+        }
     });
 
     socket.on('room_users', (users) => {
@@ -263,6 +375,112 @@
 
     document.getElementById('exit-btn').addEventListener('click', () => window.location.href = '/');
 
+    function scrollToMessage(id) {
+        const el = document.getElementById(`msg-${id}`);
+        if(el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            el.classList.add('mauve-glow');
+            setTimeout(() => el.classList.remove('mauve-glow'), 2000);
+        }
+    }
+
+    // Context Menu & Reply Logic
+    let currentReplyTo = null;
+    let selectedMsgId = null;
+    const contextMenu = document.getElementById('context-menu');
+    const replyPreviewBar = document.getElementById('reply-preview-bar');
+
+    function showContextMenu(e, el) {
+        e.preventDefault();
+        selectedMsgId = el.getAttribute('data-msg-id');
+        const msgUser = el.getAttribute('data-user');
+        const unsendBtn = document.getElementById('unsend-btn');
+        
+        // Only show unsend for own messages
+        unsendBtn.classList.toggle('hidden', msgUser !== username);
+        
+        contextMenu.style.left = `${Math.min(e.pageX, window.innerWidth - 170)}px`;
+        contextMenu.style.top = `${e.pageY}px`;
+        contextMenu.classList.remove('hidden');
+        setTimeout(() => {
+            contextMenu.classList.remove('opacity-0', 'scale-95');
+        }, 10);
+    }
+
+    function hideContextMenu() {
+        contextMenu.classList.add('opacity-0', 'scale-95');
+        setTimeout(() => contextMenu.classList.add('hidden'), 150);
+    }
+
+    window.addEventListener('click', hideContextMenu);
+    window.addEventListener('scroll', hideContextMenu, true);
+
+    function handleReplyAction() {
+        const msgEl = document.getElementById(`msg-${selectedMsgId}`);
+        const user = msgEl.querySelector('.bubble-content').getAttribute('data-user');
+        const textArea = msgEl.querySelector('.bubble-content p');
+        const text = textArea ? textArea.innerText : '📷 Photo';
+        
+        currentReplyTo = { id: selectedMsgId, user, text };
+        
+        document.getElementById('reply-user').innerText = user === username ? 'You' : user;
+        document.getElementById('reply-text').innerText = text;
+        replyPreviewBar.classList.remove('hidden');
+        messageInput.focus();
+    }
+
+    function cancelReply() {
+        currentReplyTo = null;
+        replyPreviewBar.classList.add('hidden');
+    }
+
+    function handleUnsendAction() {
+        if(confirm('Unsend this message for everyone?')) {
+            socket.emit('delete_message', selectedMsgId);
+        }
+    }
+
+    // Long press support for mobile
+    document.addEventListener('touchstart', (e) => {
+        const bubble = e.target.closest('.bubble-content');
+        if(bubble) {
+            bubble.longPressTimer = setTimeout(() => {
+                showContextMenu({
+                    preventDefault: () => {},
+                    pageX: e.touches[0].pageX,
+                    pageY: e.touches[0].pageY
+                }, bubble);
+            }, 500);
+        }
+    });
+
+    document.addEventListener('touchend', (e) => {
+        const bubble = e.target.closest('.bubble-content');
+        if(bubble && bubble.longPressTimer) clearTimeout(bubble.longPressTimer);
+    });
+
+    // Image Modal Controls
+    const imageModal = document.getElementById('image-modal');
+    const modalImg = document.getElementById('modal-img');
+    
+    function openImageModal(src) {
+        modalImg.src = src;
+        imageModal.classList.remove('hidden');
+        setTimeout(() => {
+            imageModal.classList.remove('opacity-0');
+            modalImg.classList.remove('scale-95');
+        }, 10);
+    }
+
+    function closeImageModal() {
+        imageModal.classList.add('opacity-0');
+        modalImg.classList.add('scale-95');
+        setTimeout(() => imageModal.classList.add('hidden'), 300);
+    }
+
+    document.getElementById('close-modal').onclick = closeImageModal;
+    imageModal.onclick = (e) => { if(e.target === imageModal) closeImageModal(); };
+
     document.getElementById('clear-chat-btn').addEventListener('click', () => {
         if(confirm('Clear message history from your view?')) chatContainer.innerHTML = '';
     });
@@ -273,7 +491,11 @@
         if(this.files && this.files[0]) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                socket.emit('send_message', { text: `<img src="${e.target.result}" class="max-w-xs rounded-md mt-2 border border-outline-variant/30" />` });
+                socket.emit('send_message', { 
+                    text: `<img src="${e.target.result}" />`,
+                    replyTo: currentReplyTo 
+                });
+                cancelReply();
             }
             reader.readAsDataURL(this.files[0]);
             this.value = ''; 
@@ -300,13 +522,24 @@
     function sendMessage() {
         const text = messageInput.value.trim();
         if (text) {
-            socket.emit('send_message', { text });
+            socket.emit('send_message', { 
+                text,
+                replyTo: currentReplyTo 
+            });
             resetInput();
+            cancelReply();
         }
     }
 
     sendButton.addEventListener('click', sendMessage);
 
+    // Handle mobile viewport resizing explicitly for older browsers
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', () => {
+            document.body.style.height = `${window.visualViewport.height}px`;
+            scrollToBottom();
+        });
+    }
 
 </script>
 </body></html>
