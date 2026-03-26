@@ -456,6 +456,26 @@
     window.addEventListener('click', hideContextMenu);
     window.addEventListener('scroll', hideContextMenu, true);
 
+    function handleReplyAction() {
+        const msgEl = document.getElementById(`msg-${selectedMsgId}`);
+        const user = msgEl.querySelector('.bubble-content').getAttribute('data-user');
+        const textArea = msgEl.querySelector('.bubble-content p');
+        const text = textArea ? textArea.innerText : '📷 Photo';
+        
+        currentReplyTo = { id: selectedMsgId, user, text };
+        
+        document.getElementById('reply-user').innerText = user === username ? 'You' : user;
+        document.getElementById('reply-text').innerText = text;
+        replyPreviewBar.classList.remove('hidden');
+        cancelEdit();
+        messageInput.focus();
+    }
+
+    function cancelReply() {
+        currentReplyTo = null;
+        replyPreviewBar.classList.add('hidden');
+    }
+
     function handleCopyAction() {
         const msgEl = document.getElementById(`msg-${selectedMsgId}`);
         const p = msgEl.querySelector('.bubble-content p');
