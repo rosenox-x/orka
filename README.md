@@ -1,79 +1,88 @@
-# Orka - Secure Node Messaging Protocol
+# Orka: Secure Node Messaging Protocol
 
-Orka is a minimal, secure, and highly responsive real-time messaging application designed for anonymous and encrypted communication. Featuring a sleek AMOLED-black aesthetic with glassmorphism elements, Orka offers a premium feel while prioritizing user privacy and security.
-
-[![Live Demo](https://img.shields.io/badge/Live-Demo-%23B784A7?style=for-the-badge&logo=render&logoColor=white)](https://orka-rmj6.onrender.com)
+Orka is a high-performance, real-time messaging platform designed for secure, anonymous, and ephemeral communication. Built with a focus on privacy and a premium user experience, Orka leverages modern web standards to provide a seamless messaging environment across desktop and mobile devices.
 
 ---
 
-## ✨ Features
+## Core Features
 
-### 🛡️ Privacy & Security
-- **Selection Protection**: All text in the UI is unselectable and uncopyable via standard system shortcuts to prevent unauthorized data extraction.
-- **Official Copy**: Built-in context menu action to copy message text securely to the clipboard.
-- **Zero-Trace Protocol**: Minimal data storage and room-based ephemeral communication.
+### Privacy and Security
+*   **Protocol-Level Anonymity**: No user accounts or persistent identity storage. Communication is room-based and transient.
+*   **UI Hardening**: Built-in protection against unauthorized text selection and copy-paste, ensuring message integrity within the secure environment.
+*   **Encrypted Payloads**: Optimized for low-latency, secure data transmission via Socket.io.
 
-### 💬 Rich Messaging
-- **Edit & Unsend**: Complete control over your messages. Edit content post-send or unsend messages for everyone in the room.
-- **Smart Replies**: Inline reply functionality with interactive navigation directly to the original message.
-- **Image Support**: Drag-and-drop or select images for instant sharing with bubble-shaped thumbnails.
-- **Click-to-Zoom**: Enhanced image viewing with a high-resolution modal preview.
+### Advanced Messaging Mechanics
+*   **Dynamic Customization Engine**: Real-time theme injection allowing users to customize accent colors (presets or hex), UI rounding, font sizes, and notification sounds.
+*   **Slide-to-Reply**: Gesture-based interaction system (touch and mouse) for seamless message threading.
+*   **Enhanced Media Handling**: Support for large media uploads (up to 50MB) with high-fidelity, click-to-zoom modal previews.
+*   **Full Message Lifecycle Control**: Native support for message editing, "unsending" (deletion for all), and interactive nested replies.
 
-### 🚀 Real-Time Interaction
-- **Dynamic Typing Indicators**: See when others are typing in real-time.
-- **User Presence**: Live online user list for each secure node.
-- **Consecutive Message Grouping**: Clean, chat-bubble UI that groups messages from the same sender to optimize space.
-- **Mobile Optimized**: Responsive layout with keyboard-aware viewport handling.
-
----
-
-## 🛠️ Tech Stack
-
-- **Frontend**: HTML5, Vanilla JavaScript, Tailwind CSS (Modern Glassmorphism Design).
-- **Backend**: Node.js, Express.
-- **Real-time Engine**: Socket.io for low-latency, bi-directional communication.
-- **Typography**: Manrope for headlines and Inter for a crisp reading experience.
-- **Icons**: Material Symbols Outlined for a modern, minimalist feel.
+### Real-Time Interaction
+*   **Active Node Monitoring**: Live user presence tracking within specific secure nodes.
+*   **Intelligent Typing Indicators**: Context-aware indicators showing real-time participant activity.
+*   **Background Synchronization**: Native browser notification system with background sound alerts and one-click navigation back to active chat nodes.
 
 ---
 
-## ⚙️ Running Locally
+## Technical Architecture
 
-1.  **Clone the Repository**:
-    ```bash
-    git clone https://github.com/rosenox-x/orka.git
-    cd orka
-    ```
+### Frontend Stack
+*   **Engine**: Vanilla JavaScript (ES6+) for maximum performance.
+*   **Style System**: Tailwind CSS with custom glassmorphism utilities and dynamic CSS variable injection.
+*   **Typography**: Optimized for readability using Manrope (Headlines) and Inter (Body).
+*   **Icons**: Material Symbols Outlined for a consistent, minimal aesthetic.
 
-2.  **Install Dependencies**:
-    ```bash
-    npm install
-    ```
-
-3.  **Launch the Server**:
-    ```bash
-    npm start
-    ```
-
-4.  **Access the App**:
-    Open `http://localhost:3000` in your preferred browser.
+### Backend Infrastructure
+*   **Runtime**: Node.js with Express for core routing.
+*   **Communication Layer**: Bi-directional, event-based synchronization powered by Socket.io 4.x.
+*   **Storage**: Zero-persistence server model; client-side settings are managed via localized browser storage.
 
 ---
 
-## 🌐 Deployment
+## Installation and Deployment
 
-The application is currently live and accessible at:
-👉 **[https://orka-rmj6.onrender.com](https://orka-rmj6.onrender.com)**
+### 1. Prerequisites
+Ensure you have **Node.js** (v14+) and **npm** installed on your system.
+
+### 2. Local Setup
+Clone the repository and install the required dependencies:
+```bash
+git clone https://github.com/rosenox-x/orka.git
+cd orka
+npm install
+```
+
+### 3. Execution
+Start the production server:
+```bash
+npm start
+```
+By default, the application will be accessible at `http://localhost:3000`.
+
+### 4. Configuration
+The server's memory buffer and port can be configured within `server.js`. The default message payload limit is currently set to **50MB**.
 
 ---
 
-## 🎨 Design Philosophy
+## User Interaction Guide
+
+*   **Accessing Settings**: Click the gear icon in the top-right header to access the Customization Modal.
+*   **Message Actions**: Long-press (mobile) or Right-click (desktop) any message bubble to access the context menu for Editing, Copying, or Unsending.
+*   **Replying**: Swipe any message bubble (Right for others, Left for your own) to initiate a reply, or use the context menu.
+
+---
+
+## License and Terms
+
+---
+
+## Technical Design
 
 Orka uses a curated dark-mode palette:
 - **AMOLED Surface**: `#000000` for true blacks and power efficiency on modern displays.
-- **Mauve Primary**: `#B784A7` as the core accent for buttons, status indicators, and own message bubbles.
+- **Dynamic Accents**: User-selectable colors (Mauve, Blue, Emerald, etc.) for UI elements, status indicators, and own message bubbles.
 - **Glassmorphism**: Backdrop blur effects on headers and inputs for a layered, premium depth.
 
 ---
 
-&copy; 2026 Orka. A product by Anurag Roy.
+© 2026 Orka Protocol. A product by Anurag Roy. Developed for secure, modern communication.
