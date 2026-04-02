@@ -4,7 +4,7 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server, {
-  maxHttpBufferSize: 5e7 // 50MB limit for image uploads
+  maxHttpBufferSize: 4.5e8 // 450MB limit
 });
 const path = require('path');
 
@@ -19,7 +19,8 @@ app.get('/chat', (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-const roomUsers = {};
+const nodeHistory = {}; // { port: { username: status/lastSeen } }
+const roomUsers = {}; 
 
 io.on('connection', (socket) => {
   socket.on('join_room', ({ username, port }) => {
@@ -31,8 +32,11 @@ io.on('connection', (socket) => {
     if (!roomUsers[port]) roomUsers[port] = {};
     roomUsers[port][socket.id] = username;
     
-    // Broadcast updated users list
-    io.to(port).emit('room_users', Object.values(roomUsers[port]));
+    if (!nodeHistory[port]) nodeHistory[port] = {};
+    nodeHistory[port][username] = 'Online';
+    
+    // Broadcast updated users list with status
+    io.to(port).emit('room_users', nodeHistory[port]);
     
     // System message to others
     socket.to(port).emit('message', {
@@ -64,6 +68,21 @@ io.on('connection', (socket) => {
     io.to(socket.port).emit('edit_message', { id, text });
   });
 
+  socket.on('reaction', ({ msgId, emoji, user }) => {
+    if (!socket.port) return;
+    io.to(socket.port).emit('reaction', { msgId, emoji, user });
+  });
+
+  socket.on('pin_message', ({ id, text, user }) => {
+    if (!socket.port) return;
+    io.to(socket.port).emit('pin_message', { id, text, user });
+  });
+
+  socket.on('unpin_message', (id) => {
+    if (!socket.port) return;
+    io.to(socket.port).emit('unpin_message', id);
+  });
+
   socket.on('typing', (isTyping) => {
     if (!socket.port || !socket.username) return;
     socket.to(socket.port).emit('typing', { username: socket.username, isTyping });
@@ -73,11 +92,14 @@ io.on('connection', (socket) => {
     if (socket.port && socket.username) {
       if (roomUsers[socket.port]) {
         delete roomUsers[socket.port][socket.id];
-        io.to(socket.port).emit('room_users', Object.values(roomUsers[socket.port]));
-        // cleanup empty rooms
-        if (Object.keys(roomUsers[socket.port]).length === 0) {
-          delete roomUsers[socket.port];
+        
+        // Check if user has no more open sockets in this room
+        const stillInRoom = Object.values(roomUsers[socket.port]).includes(socket.username);
+        if (!stillInRoom && nodeHistory[socket.port]) {
+            nodeHistory[socket.port][socket.username] = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         }
+        
+        io.to(socket.port).emit('room_users', nodeHistory[socket.port]);
       }
       
       socket.to(socket.port).emit('message', {

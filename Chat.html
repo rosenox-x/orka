@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html class="dark" lang="en"><head>
+<html class="dark" lang="en" style="overflow-x: hidden;"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" name="viewport"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -22,9 +22,9 @@
                         "surface-container-low": "var(--surface-container-low)",
                         "surface-container-high": "var(--surface-container-high)",
                         "surface-container-highest": "var(--surface-container-highest)",
-                        "on-surface": "#ffffff",
-                        "on-surface-variant": "#ababab",
-                        "outline-variant": "#484848",
+                        "on-surface": "var(--on-surface)",
+                        "on-surface-variant": "var(--on-surface-variant)",
+                        "outline-variant": "var(--outline-variant)",
                         "background": "var(--surface)"
                     },
                     fontFamily: {
@@ -53,11 +53,26 @@
             --surface-container-low: #0e0e0e;
             --surface-container-high: #1f1f1f;
             --surface-container-highest: #262626;
+            --on-surface: #ffffff;
+            --on-surface-variant: #ababab;
+            --outline-variant: #484848;
             --primary-rgb: 183, 132, 167;
             --radius: 0.5rem;
             --radius-lg: 0.5rem;
             --radius-xl: 0.75rem;
             --font-size: 15px;
+        }
+        :root:not(.dark) {
+            --surface: #F8F9FA;
+            --surface-container: #FFFFFF;
+            --surface-container-low: #F1F3F4;
+            --surface-container-high: #E8EAED;
+            --surface-container-highest: #DADCE0;
+            --on-surface: #1A1C1E;
+            --on-surface-variant: #44474E;
+            --outline-variant: #C4C6D0;
+            --primary-container: #F0DCEB;
+            --on-primary-container: #4A223E;
         }
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
@@ -83,7 +98,8 @@
             height: 100dvh;
             display: flex;
             flex-direction: column;
-            background-color: #000000;
+            background-color: var(--surface);
+            overflow-x: hidden;
         }
         .mauve-glow {
             box-shadow: 0 0 24px rgba(var(--primary-rgb), 0.3);
@@ -126,37 +142,68 @@
             opacity: 1;
             transform: translateY(-50%) scale(1);
         }
+        #scroll-bottom-btn {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .message-highlight {
+            animation: highlight 2s ease-out;
+        }
+        @keyframes highlight {
+            0% { background-color: rgba(var(--primary-rgb), 0.3); }
+            100% { background-color: transparent; }
+        }
+        .reaction-pop-animate {
+            animation: reactionPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes reactionPop {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        #pinned-message-bar {
+            transition: all 0.3s ease;
+        }
+        .chat-wallpaper-mesh {
+            background-image: radial-gradient(circle at 50% 50%, rgba(var(--primary-rgb), 0.05) 0%, transparent 50%),
+                              radial-gradient(circle at 10% 20%, rgba(var(--primary-rgb), 0.03) 0%, transparent 40%);
+        }
+        .logo-text {
+            color: var(--primary);
+            text-shadow: 0 0 15px rgba(var(--primary-rgb), 0.4);
+            letter-spacing: -0.05em;
+            font-weight: 900;
+        }
     </style>
 </head>
-<body class="bg-black text-on-surface font-body selection:bg-primary/30 selection:text-white overflow-hidden">
+<body class="bg-surface text-on-surface font-body selection:bg-primary/30 selection:text-white overflow-hidden">
 <!-- TopAppBar -->
-<header class="sticky top-0 w-full z-50 bg-[#000000]/80 backdrop-blur-xl flex justify-between items-center px-6 h-20 shrink-0 shadow-[0_4px_20px_rgba(183,132,167,0.04)]">
+<header class="sticky top-0 w-full z-50 bg-surface/80 backdrop-blur-xl flex flex-col shrink-0 shadow-[0_4px_20px_rgba(var(--primary-rgb),0.04)]">
+<div class="flex justify-between items-center px-6 h-20">
 <div class="flex items-center gap-4">
-<button id="menu-btn" class="text-[#ababab] hover:bg-[#1f1f1f] transition-colors p-2 rounded-full active:scale-95 duration-200">
+<button id="menu-btn" class="text-on-surface-variant hover:bg-primary/10 hover:text-primary transition-all p-2 rounded-xl active:scale-95 duration-200 flex items-center justify-center">
 <span class="material-symbols-outlined">menu</span>
 </button>
 <div class="flex items-center gap-3">
-<div>
-<h1 id="header-title" class="font-headline font-bold tracking-tight text-lg text-white">Secure Node</h1>
-<p id="header-subtitle" class="text-[10px] text-primary uppercase tracking-widest font-bold">Connecting...</p>
+    <div class="mr-2">
+        <h1 class="font-headline logo-text text-3xl uppercase">
+            Orka
+        </h1>
+    </div>
 </div>
 </div>
+<div class="flex items-center gap-1 md:gap-2">
+<button id="settings-btn" title="App Settings" class="text-on-surface-variant hover:bg-primary/10 hover:text-primary transition-all p-2 rounded-xl active:scale-95 flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">settings</span>
+</button>
+
+<button id="exit-btn" title="Exit Node" class="text-on-surface-variant hover:bg-error/10 hover:text-error transition-all p-2 rounded-xl active:scale-95 flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">logout</span>
+</button>
 </div>
-<div class="flex items-center gap-2">
-<button id="settings-btn" title="App Settings" class="text-[#ababab] hover:text-white hover:bg-[#1f1f1f] transition-colors p-2 rounded-full active:scale-95 duration-200">
-<span class="material-symbols-outlined">settings</span>
-</button>
-<button id="clear-chat-btn" title="Clear Chat" class="text-[#ababab] hover:text-error hover:bg-[#1f1f1f] transition-colors p-2 rounded-full active:scale-95 duration-200">
-<span class="material-symbols-outlined">delete_sweep</span>
-</button>
-<button id="exit-btn" title="Exit Node" class="text-[#ababab] hover:text-error hover:bg-[#1f1f1f] transition-colors p-2 rounded-full active:scale-95 duration-200">
-<span class="material-symbols-outlined">logout</span>
-</button>
 </div>
 </header>
 <!-- Sidebar Drawer -->
 <div id="users-sidebar" class="fixed inset-y-0 left-0 w-64 bg-surface-container-highest z-[60] transform -translate-x-full transition-transform duration-300 shadow-2xl flex flex-col">
-    <div class="p-6 flex items-center justify-between border-b border-outline-variant/20 h-20">
+    <div class="p-6 flex items-center justify-between h-20">
         <h2 class="font-headline font-bold text-lg text-white">Online</h2>
         <button id="close-sidebar-btn" class="text-[#ababab] hover:text-white transition-colors">
             <span class="material-symbols-outlined">close</span>
@@ -165,23 +212,68 @@
     <div class="p-6 flex-1 overflow-y-auto w-full custom-scrollbar">
         <ul id="users-list" class="space-y-4">
         </ul>
+        <div class="h-8"></div>
+        <h3 id="pinned-section-title" class="hidden text-[10px] font-bold text-primary uppercase tracking-widest mb-4">Pinned Messages</h3>
+        <ul id="pinned-list-sidebar" class="space-y-3"></ul>
     </div>
-    <div class="p-6 border-t border-outline-variant/20 bg-black/20">
+    <div class="p-6 bg-black/20">
+        <h3 class="text-[10px] font-bold text-primary uppercase tracking-widest mb-4">Saved Content</h3>
+        <button id="starred-messages-btn" class="w-full flex items-center gap-3 text-sm text-on-surface hover:text-primary transition-colors mb-6 group">
+            <span class="material-symbols-outlined text-[#ababab] group-hover:text-primary transition-colors">star</span>
+            <span>Starred Messages</span>
+        </button>
+
+        <h3 class="text-[10px] font-bold text-primary uppercase tracking-widest mb-4">Node Info</h3>
+        <div class="space-y-3 mb-6">
+            <div class="flex items-center justify-between text-[11px] text-on-surface-variant">
+                <span>Current Port</span>
+                <span id="sidebar-port-display" class="text-on-surface font-bold opacity-80 underline underline-offset-4 decoration-primary/40">----</span>
+            </div>
+            <div class="flex items-center justify-between text-[11px] text-on-surface-variant">
+                <span>Identify</span>
+                <span id="sidebar-user-display" class="text-on-surface font-bold opacity-80">----</span>
+            </div>
+            <div class="flex items-center justify-between text-[11px] text-on-surface-variant">
+                <span>Status</span>
+                <span class="text-primary font-bold uppercase tracking-wider">Secure</span>
+            </div>
+            <div id="node-up-time" class="flex items-center justify-between text-[11px] text-on-surface-variant">
+                <span>Active Since</span>
+                <span id="start-time-display" class="text-on-surface opacity-80">00:00</span>
+            </div>
+        </div>
+
         <h3 class="text-[10px] font-bold text-primary uppercase tracking-widest mb-4">Settings</h3>
         <button id="notification-toggle" class="w-full flex items-center justify-between group">
             <div class="flex items-center gap-3">
                 <span class="material-symbols-outlined text-[#ababab] group-hover:text-primary transition-colors">notifications</span>
                 <span class="text-sm text-on-surface">Push Notifications</span>
             </div>
-            <div id="notif-status-dot" class="w-2 h-2 rounded-full bg-error shadow-[0_0_8px_rgba(239,68,68,0.4)]"></div>
+            <div id="notif-status-dot" class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(var(--primary-rgb),0.4)]"></div>
         </button>
     </div>
 </div>
 <!-- Sidebar Overlay -->
 <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-[55] hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm"></div>
 <!-- Main Chat Canvas -->
-<main id="chat-messages-container" class="flex-1 overflow-y-auto px-6 py-6 custom-scrollbar bg-black flex flex-col">
+<main id="chat-messages-container" class="flex-1 overflow-y-auto overflow-x-hidden px-6 py-6 custom-scrollbar bg-surface flex flex-col relative chat-wallpaper-mesh">
+    <div id="pinned-message-bar" class="hidden sticky top-0 left-0 right-0 z-[40] bg-surface-container-high/90 backdrop-blur-md border border-white/5 rounded-2xl mx-4 my-2 p-3 shadow-2xl animate-in fade-in slide-in-from-top-4 duration-300 backdrop-saturate-150">
+        <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary text-lg">push_pin</span>
+            <div class="flex-1 min-w-0">
+                <p id="pinned-preview-text" class="text-xs text-on-surface font-medium truncate"></p>
+                <p class="text-[9px] text-on-surface-variant uppercase tracking-wider">Pinned Message</p>
+            </div>
+            <button onclick="unpinCurrentMessage()" class="text-[#ababab] hover:text-white">
+                <span class="material-symbols-outlined text-lg">close</span>
+            </button>
+        </div>
+    </div>
 </main>
+<!-- Scroll to Bottom FAB -->
+<button id="scroll-bottom-btn" class="fixed bottom-24 right-8 w-12 h-12 rounded-full bg-surface-container-highest/90 backdrop-blur-md border border-outline-variant/30 text-primary flex items-center justify-center shadow-2xl z-[45] opacity-0 translate-y-10 pointer-events-none hover:bg-surface-container-highest transition-all group active:scale-90">
+    <span class="material-symbols-outlined group-hover:animate-bounce">arrow_downward</span>
+</button>
 <!-- Image Preview Modal -->
 <div id="image-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/95 backdrop-blur-xl transition-all duration-300 opacity-0 p-4">
     <button id="close-modal" class="absolute top-6 right-6 text-white/70 hover:text-white p-2 rounded-full bg-white/10 active:scale-95 transition-all z-[110]">
@@ -189,16 +281,75 @@
     </button>
     <img id="modal-img" class="max-w-full max-h-full object-contain rounded-xl shadow-2xl scale-95 transition-transform duration-300 pointer-events-none" alt="Full screen preview" src="" />
 </div>
+<!-- Camera Modal -->
+<div id="camera-modal" class="fixed inset-0 z-[120] hidden flex flex-col items-center justify-center bg-black/95 backdrop-blur-2xl transition-all duration-300 opacity-0 p-4">
+    <div class="relative w-full max-w-xl aspect-video bg-black rounded-3xl overflow-hidden border border-white/5 shadow-2xl">
+        <video id="camera-preview" class="w-full h-full object-cover" autoplay playsinline></video>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none"></div>
+    </div>
+    <div class="mt-8 flex items-center gap-8">
+        <button id="close-camera" class="w-14 h-14 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors">
+            <span class="material-symbols-outlined text-white">close</span>
+        </button>
+        <button id="capture-photo" class="w-20 h-20 rounded-full border-4 border-white flex items-center justify-center relative group active:scale-95 transition-all">
+            <div class="w-16 h-16 rounded-full bg-white group-hover:scale-105 transition-transform"></div>
+        </button>
+        <div class="w-14"></div> <!-- Spacer for balance -->
+    </div>
+</div>
+<!-- Attachment Menu -->
+<div id="attachment-menu" class="fixed bottom-24 left-10 z-[100] hidden flex flex-col bg-surface-container-highest/95 backdrop-blur-xl rounded-3xl shadow-2xl p-2 w-52 opacity-0 -translate-y-4 scale-95 origin-bottom-left transition-all duration-200">
+    <button onclick="openCamera()" class="flex items-center gap-4 px-4 py-3 text-sm font-medium text-white hover:bg-white/10 rounded-2xl transition-all group">
+        <span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">photo_camera</span>
+        <span>Camera</span>
+    </button>
+    <button onclick="triggerFileInput('image/*')" class="flex items-center gap-4 px-4 py-3 text-sm font-medium text-white hover:bg-white/10 rounded-2xl transition-all group">
+        <span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">image</span>
+        <span>Images</span>
+    </button>
+    <button onclick="triggerFileInput('*/*')" class="flex items-center gap-4 px-4 py-3 text-sm font-medium text-white hover:bg-white/10 rounded-2xl transition-all group">
+        <span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">attachment</span>
+        <span>Files</span>
+    </button>
+</div>
+<!-- Starred Messages Modal -->
+<div id="starred-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center bg-black/60 backdrop-blur-md transition-all duration-300 opacity-0 p-4">
+    <div id="starred-content" class="w-full max-w-lg bg-surface-container-high rounded-3xl shadow-2xl flex flex-col scale-95 transition-transform duration-300 overflow-hidden max-h-[85dvh]">
+        <div class="p-6 flex items-center justify-between">
+            <h2 class="font-headline font-bold text-xl text-white">Starred Messages</h2>
+            <button id="close-starred" class="text-[#ababab] hover:text-white p-2 rounded-full hover:bg-white/5 transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div id="starred-list-modal" class="p-6 flex-1 overflow-y-auto custom-scrollbar space-y-4">
+            <!-- Pinned messages list will go here -->
+        </div>
+        <div class="p-6 bg-black/40 text-center">
+            <p class="text-[10px] text-on-surface-variant uppercase tracking-widest">Your Private Collection</p>
+        </div>
+    </div>
+</div>
 <!-- Settings Modal -->
 <div id="settings-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center bg-black/60 backdrop-blur-md transition-all duration-300 opacity-0 p-4">
-    <div id="settings-content" class="w-full max-w-lg bg-surface-container-high border border-outline-variant/30 rounded-3xl shadow-2xl flex flex-col scale-95 transition-transform duration-300 overflow-hidden max-h-[90dvh]">
-        <div class="p-6 flex items-center justify-between border-b border-outline-variant/20">
+    <div id="settings-content" class="w-full max-w-lg bg-surface-container-high rounded-3xl shadow-2xl flex flex-col scale-95 transition-transform duration-300 overflow-hidden max-h-[90dvh]">
+        <div class="p-6 flex items-center justify-between">
             <h2 class="font-headline font-bold text-xl text-white">App Customization</h2>
             <button id="close-settings" class="text-[#ababab] hover:text-white p-2 rounded-full hover:bg-white/5 transition-colors">
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
         <div class="p-6 flex-1 overflow-y-auto custom-scrollbar space-y-8">
+            <!-- Theme Toggle Section -->
+            <section>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-[10px] font-bold text-primary uppercase tracking-[0.2em]">Dark Mode</h3>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="theme-toggle" aria-label="Toggle Dark mode" class="sr-only peer" checked onchange="toggleTheme(this.checked)">
+                        <div class="w-11 h-6 bg-surface-container rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+            </section>
+
             <!-- Accent Color Section -->
             <section>
                 <h3 class="text-[10px] font-bold text-primary uppercase tracking-[0.2em] mb-4">Accent Color</h3>
@@ -254,16 +405,31 @@
                 </div>
             </section>
         </div>
-        <div class="p-6 border-t border-outline-variant/20 bg-black/40 flex flex-col gap-3">
-            <button onclick="resetToDefaults()" class="w-full py-2.5 rounded-xl border border-primary/30 text-primary text-xs font-bold uppercase tracking-widest hover:bg-primary/5 transition-colors active:scale-[0.98]">Reset to Defaults</button>
+        </div>
+        <div class="p-6 bg-black/40 flex flex-col gap-3">
+            <button onclick="clearLocalView()" class="w-full py-2.5 rounded-xl text-error text-xs font-bold uppercase tracking-widest hover:bg-error/5 transition-colors active:scale-[0.98]">Clear Local View</button>
+            <button onclick="resetToDefaults()" class="w-full py-2.5 rounded-xl text-primary text-xs font-bold uppercase tracking-widest hover:bg-primary/5 transition-colors active:scale-[0.98]">Reset to Defaults</button>
             <p class="text-[9px] text-on-surface-variant tracking-wider text-center">Changes are saved automatically to your browser.</p>
         </div>
     </div>
 </div>
 <!-- Context Menu -->
-<div id="context-menu" class="fixed z-[100] hidden flex flex-col bg-surface-container-highest/95 backdrop-blur-xl border border-outline-variant/30 rounded-2xl shadow-2xl p-1 w-44 opacity-0 scale-95 origin-top-left bubble-context-menu">
+<div id="context-menu" class="fixed z-[100] hidden flex flex-col bg-surface-container-highest/95 backdrop-blur-xl rounded-2xl shadow-2xl p-1 w-44 opacity-0 scale-95 origin-top-left bubble-context-menu">
     <button onclick="handleReplyAction()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-white hover:bg-white/10 rounded-xl transition-colors">
-        <span class="material-symbols-outlined text-lg">reply</span> Reply
+        <span class="material-symbols-outlined text-lg text-white/70">reply</span> Reply
+    </button>
+    <button onclick="handlePinAction()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-white hover:bg-white/10 rounded-xl transition-colors">
+        <span id="pin-icon" class="material-symbols-outlined text-lg text-white/70">push_pin</span> <span id="pin-text">Pin</span>
+    </button>
+    <div class="px-3 py-2 flex items-center justify-around bg-white/5 mx-1 rounded-xl mb-1">
+        <button onclick="addReaction('👍')" class="hover:scale-125 transition-transform">👍</button>
+        <button onclick="addReaction('❤️')" class="hover:scale-125 transition-transform">❤️</button>
+        <button onclick="addReaction('😂')" class="hover:scale-125 transition-transform">😂</button>
+        <button onclick="addReaction('😮')" class="hover:scale-125 transition-transform">😮</button>
+        <button onclick="addReaction('🔥')" class="hover:scale-125 transition-transform">🔥</button>
+    </div>
+    <button onclick="handleStarAction()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-white hover:bg-white/10 rounded-xl transition-colors">
+        <span id="star-icon" class="material-symbols-outlined text-lg">star</span> <span id="star-text">Star</span>
     </button>
     <button onclick="handleCopyAction()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-white hover:bg-white/10 rounded-xl transition-colors">
         <span class="material-symbols-outlined text-lg text-white/70">content_copy</span> Copy
@@ -271,14 +437,13 @@
     <button id="edit-btn" onclick="handleEditAction()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-white hover:bg-white/10 rounded-xl transition-colors">
         <span class="material-symbols-outlined text-lg text-white/70">edit</span> Edit
     </button>
-    <div class="h-[1px] bg-white/5 my-1 mx-2"></div>
     <button id="unsend-btn" onclick="handleUnsendAction()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors">
         <span class="material-symbols-outlined text-lg">delete</span> Unsend
     </button>
 </div>
 <!-- Bottom Input Area -->
-<footer class="sticky bottom-0 w-full z-50 px-6 pb-6 bg-black shrink-0">
-<div id="edit-preview-bar" class="hidden mb-3 bg-primary/10 rounded-2xl border border-primary/20 overflow-hidden reply-preview-animate">
+<footer class="sticky bottom-0 w-full z-50 px-6 pb-6 bg-surface shrink-0">
+<div id="edit-preview-bar" class="hidden mb-3 bg-primary/10 rounded-2xl overflow-hidden reply-preview-animate">
     <div class="flex items-center gap-3 px-4 py-3 border-l-4 border-primary">
         <div class="flex-1 min-w-0">
             <p class="text-[10px] font-bold text-primary uppercase tracking-wider mb-0.5">Editing Message</p>
@@ -289,7 +454,7 @@
         </button>
     </div>
 </div>
-<div id="reply-preview-bar" class="hidden mb-3 bg-surface-container-high rounded-2xl border border-outline-variant/20 overflow-hidden reply-preview-animate">
+<div id="reply-preview-bar" class="hidden mb-3 bg-surface-container-high rounded-2xl overflow-hidden reply-preview-animate">
     <div class="flex items-center gap-3 px-4 py-3 border-l-4 border-primary">
         <div class="flex-1 min-w-0">
             <p id="reply-user" class="text-[10px] font-bold text-primary uppercase tracking-wider mb-0.5">Alice</p>
@@ -300,19 +465,22 @@
         </button>
     </div>
 </div>
-<div class="flex items-center gap-3">
-<div class="flex-1 flex items-center bg-surface-container-high rounded-[28px] px-4 min-h-[56px] border border-outline-variant/20 focus-within:bg-surface-container-highest transition-all group py-2">
-<textarea id="message-input" class="bg-transparent border-none focus:ring-0 text-on-surface placeholder:text-on-surface-variant w-full px-3 text-[15px] resize-none overflow-hidden py-2" placeholder="Message..." rows="1" autocomplete="off"></textarea>
-<div class="flex items-center gap-3 pr-1">
-<label id="image-btn" title="Upload Image" class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer relative overflow-hidden flex items-center">
-<span class="material-symbols-outlined">image</span>
-<input type="file" id="image-upload" title="Upload Image" alt="Choose image" accept="image/*" class="absolute inset-0 w-[200%] h-[200%] -top-4 -left-4 opacity-0 cursor-pointer" />
-</label>
-</div>
-</div>
-<button id="send-button" class="w-14 h-14 rounded-full bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-white mauve-glow active:scale-90 transition-transform">
-<span id="send-btn-icon" class="material-symbols-outlined filled text-2xl">send</span>
-</button>
+<div class="flex items-center gap-2">
+    <!-- Clean Minimalist Plus Button -->
+    <button id="attachment-btn" title="Add Attachment" class="w-11 h-11 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-all active:scale-95 shrink-0">
+        <span id="plus-icon" class="material-symbols-outlined text-[28px] transition-transform duration-300">add</span>
+    </button>
+    
+    <!-- Modern Minimalist Input (Borderless) -->
+    <div class="flex-1 flex items-center bg-surface-container rounded-[24px] px-4 min-h-[52px] focus-within:bg-surface-container-high transition-all py-1">
+        <textarea id="message-input" class="bg-transparent border-none focus:ring-0 text-on-surface placeholder:text-on-surface-variant/50 w-full px-2 text-[15px] resize-none overflow-hidden py-2" placeholder="Message..." rows="1" autocomplete="off"></textarea>
+        <input type="file" id="media-input-hidden" class="hidden" />
+    </div>
+
+    <!-- Minimalist Send Button -->
+    <button id="send-button" class="w-11 h-11 rounded-full bg-primary flex items-center justify-center text-white hover:brightness-110 active:scale-90 transition-all shrink-0">
+        <span id="send-btn-icon" class="material-symbols-outlined text-[20px] transition-all">send</span>
+    </button>
 </div>
 </footer>
 <script src="/socket.io/socket.io.js"></script>
@@ -320,31 +488,280 @@
     const urlParams = new URLSearchParams(window.location.search);
     const username = urlParams.get('username');
     const port = urlParams.get('port');
+    const startTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    document.getElementById('start-time-display').innerText = startTime;
 
     if (!username || !port) {
         window.location.href = '/';
     }
 
-    document.getElementById('header-title').innerText = `Port: ${port}`;
-    document.getElementById('header-subtitle').innerText = 'Active Node';
-
     const socket = io();
-    const headerSubtitle = document.getElementById('header-subtitle');
+    
+    // Global Elements & State
+    let chatContainer, messageInput, sendButton, attachmentBtn, attachmentMenu, plusIcon, mediaInputHidden;
+    let sidebar, overlay, settingsModal, settingsContent, starredModal, starredContent, starredListModal;
+    let pinnedMessages = [];
+    let starredMessages = JSON.parse(localStorage.getItem(`starred_${port}`) || '{}');
+    let selectedMsgId = null;
+    let currentReplyTo = null;
+    let lastSender = null;
+    let typingTimer;
+    let isEditing = false;
+    let editingMsgId = null;
+    let scrollBottomBtn, contextMenu, replyPreviewBar;
 
+
+    // Configuration State
+    let settings = {
+        primary: '#B784A7',
+        primaryContainer: '#4A223E',
+        primaryRgb: '183,132,167',
+        sounds: true,
+        volume: 0.5,
+        fontSize: 15,
+        radius: 1,
+        darkMode: true
+    };
+
+    // Socket Initialization
     socket.on('connect', () => {
-        headerSubtitle.innerText = 'Synchronizing...';
-        headerSubtitle.classList.remove('animate-pulse');
         socket.emit('join_room', { username, port });
     });
 
-    socket.on('disconnect', () => {
-        headerSubtitle.innerText = 'Offline - Reconnecting';
-        headerSubtitle.classList.add('animate-pulse');
+    window.addEventListener('load', () => {
+        initElements();
+        initChat();
+        loadSettings();
+        updateNotifStatus();
+        updateStarIcons();
     });
 
-    const chatContainer = document.getElementById('chat-messages-container');
-    const messageInput = document.getElementById('message-input');
-    const sendButton = document.getElementById('send-button');
+    function initElements() {
+        chatContainer = document.getElementById('chat-messages-container');
+        messageInput = document.getElementById('message-input');
+        sendButton = document.getElementById('send-button');
+        attachmentBtn = document.getElementById('attachment-btn');
+        attachmentMenu = document.getElementById('attachment-menu');
+        plusIcon = document.getElementById('plus-icon');
+        mediaInputHidden = document.getElementById('media-input-hidden');
+        sidebar = document.getElementById('users-sidebar');
+        overlay = document.getElementById('sidebar-overlay');
+        settingsModal = document.getElementById('settings-modal');
+        settingsContent = document.getElementById('settings-content');
+        starredModal = document.getElementById('starred-modal');
+        starredContent = document.getElementById('starred-content');
+        starredListModal = document.getElementById('starred-list-modal');
+        scrollBottomBtn = document.getElementById('scroll-bottom-btn');
+        contextMenu = document.getElementById('context-menu');
+        replyPreviewBar = document.getElementById('reply-preview-bar');
+    }
+
+    function initChat() {
+        // Session Info
+        const portDisplay = document.getElementById('sidebar-port-display');
+        const userDisplay = document.getElementById('sidebar-user-display');
+        const startDisplay = document.getElementById('start-time-display');
+
+        if (portDisplay) portDisplay.innerText = port;
+        if (userDisplay) userDisplay.innerText = username;
+        if (startDisplay) startDisplay.innerText = startTime || '00:00';
+        
+        // Attachment Menu
+        if (attachmentBtn && attachmentMenu) {
+            attachmentBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isHidden = attachmentMenu.classList.contains('hidden');
+                if (isHidden) {
+                    attachmentMenu.classList.remove('hidden');
+                    if (plusIcon) plusIcon.classList.add('rotate-45', 'text-primary');
+                    setTimeout(() => {
+                        attachmentMenu.classList.remove('opacity-0', '-translate-y-4', 'scale-95');
+                    }, 10);
+                } else {
+                    closeAttachmentMenu();
+                }
+            });
+        }
+
+        document.addEventListener('click', closeAttachmentMenu);
+        
+        // Input handlers
+        if (messageInput) {
+            messageInput.addEventListener('input', () => {
+                messageInput.style.height = 'auto';
+                messageInput.style.height = messageInput.scrollHeight + 'px';
+                socket.emit('typing', true);
+                clearTimeout(typingTimer);
+                typingTimer = setTimeout(() => socket.emit('typing', false), 2000);
+            });
+            
+            messageInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+        }
+
+        if (sendButton) {
+            sendButton.addEventListener('mousedown', (e) => e.preventDefault());
+            sendButton.addEventListener('click', sendMessage);
+        }
+
+        // File Change Listener
+        if (mediaInputHidden) {
+            mediaInputHidden.onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const result = event.target.result;
+                    if (file.type.startsWith('image/')) {
+                        const img = `<img src="${result}" alt="Attachment" />`;
+                        socket.emit('send_message', { text: img, replyTo: currentReplyTo });
+                    } else {
+                        const fileHtml = `
+                            <a href="${result}" target="_blank" download="${file.name}" onclick="event.stopPropagation()" class="file-attachment flex items-center gap-3 p-1 hover:bg-white/5 transition-all rounded-xl no-underline cursor-pointer">
+                                <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-primary">description</span>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-bold truncate text-on-surface mb-0">${file.name}</p>
+                                    <p class="text-[10px] uppercase opacity-50 text-on-surface-variant mb-0">${(file.size / 1024).toFixed(1)} KB</p>
+                                </div>
+                                <span class="material-symbols-outlined text-primary hover:scale-110 transition-transform shrink-0">download</span>
+                            </a>
+                        `;
+                        socket.emit('send_message', { text: fileHtml, replyTo: currentReplyTo });
+                    }
+                    if (currentReplyTo) cancelReply();
+                };
+                
+                if (file.type.startsWith('image/') || file.size < 4.5e8) {
+                    reader.readAsDataURL(file);
+                } else {
+                    showToast('File too large (max 450MB)');
+                }
+                e.target.value = '';
+            };
+        }
+
+        // Sidebar Buttons
+        const menuBtn = document.getElementById('menu-btn');
+        if (menuBtn && sidebar && overlay) {
+            menuBtn.addEventListener('click', () => {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+            });
+        }
+
+        const settingsBtn = document.getElementById('settings-btn');
+        if (settingsBtn && settingsModal) {
+            settingsBtn.addEventListener('click', () => {
+                settingsModal.classList.remove('hidden');
+                setTimeout(() => {
+                    settingsModal.classList.remove('opacity-0');
+                    if (settingsContent) settingsContent.classList.remove('scale-95');
+                }, 10);
+            });
+        }
+
+        const starBtn = document.getElementById('starred-messages-btn');
+        if (starBtn) starBtn.addEventListener('click', openStarredList);
+
+        // Scroll Bottom Button
+        if (chatContainer) {
+            chatContainer.addEventListener('scroll', () => {
+                const scrollPos = chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight;
+                if (scrollBottomBtn) {
+                    if (scrollPos > 300) {
+                        scrollBottomBtn.classList.remove('opacity-0', 'translate-y-10', 'pointer-events-none');
+                    } else {
+                        scrollBottomBtn.classList.add('opacity-0', 'translate-y-10', 'pointer-events-none');
+                    }
+                }
+            });
+        }
+        if (scrollBottomBtn) scrollBottomBtn.addEventListener('click', scrollToBottom);
+
+        // Sidebar Close Button
+        const closeSidebarBtn = document.getElementById('close-sidebar-btn');
+        if (closeSidebarBtn) closeSidebarBtn.addEventListener('click', closeSidebar);
+        if (overlay) overlay.addEventListener('click', closeSidebar);
+
+        // Starred Modal Close Buttons
+        const closeStarredBtn = document.getElementById('close-starred');
+        if (closeStarredBtn) closeStarredBtn.onclick = closeStarred;
+        if (starredModal) starredModal.onclick = (e) => { if (e.target === starredModal) closeStarred(); };
+
+        // Settings Modal Close Buttons
+        const closeSettingsBtn = document.getElementById('close-settings');
+        if (closeSettingsBtn) closeSettingsBtn.onclick = closeSettings;
+        if (settingsModal) settingsModal.onclick = (e) => { if (e.target === settingsModal) closeSettings(); };
+
+        // Exit Button
+        const exitBtn = document.getElementById('exit-btn');
+        if (exitBtn) exitBtn.addEventListener('click', () => window.location.href = '/');
+    }
+
+    function openStarredList() {
+        starredListModal.innerHTML = '';
+        const starredArray = Object.values(starredMessages);
+        
+        if (starredArray.length === 0) {
+            starredListModal.innerHTML = '<div class="flex flex-col items-center justify-center py-12 opacity-40"><span class="material-symbols-outlined text-4xl mb-4">star_outline</span><p class="text-sm">No starred messages yet</p></div>';
+        } else {
+            starredArray.forEach(msg => {
+                const div = document.createElement('div');
+                div.className = 'bg-surface-container/50 border border-white/5 p-4 rounded-2xl cursor-pointer hover:bg-white/5 transition-all group';
+                div.innerHTML = `
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-[10px] text-primary font-bold uppercase tracking-widest">${msg.user}</span>
+                        <span class="text-[9px] text-on-surface-variant">${msg.time}</span>
+                    </div>
+                    <p class="text-[14px] text-on-surface line-clamp-3">${msg.text}</p>
+                `;
+                div.onclick = () => {
+                    scrollToMessage(msg.id);
+                    closeStarred();
+                    closeSidebar();
+                };
+                starredListModal.appendChild(div);
+            });
+        }
+        
+        starredModal.classList.remove('hidden');
+        setTimeout(() => {
+            starredModal.classList.remove('opacity-0');
+            starredContent.classList.remove('scale-95');
+        }, 10);
+    }
+
+    function closeAttachmentMenu() {
+        if (!attachmentMenu || attachmentMenu.classList.contains('hidden')) return;
+        attachmentMenu.classList.add('opacity-0', '-translate-y-4', 'scale-95');
+        plusIcon.classList.remove('rotate-45', 'text-primary');
+        setTimeout(() => attachmentMenu.classList.add('hidden'), 200);
+    }
+
+    function getAvatarColor(name) {
+        const colors = [
+            'linear-gradient(135deg, #B784A7, #4A223E)', 
+            'linear-gradient(135deg, #3B82F6, #172554)',
+            'linear-gradient(135deg, #10B881, #064E3B)',
+            'linear-gradient(135deg, #EF4444, #450A0A)',
+            'linear-gradient(135deg, #F59E0B, #451A03)',
+            'linear-gradient(135deg, #8B5CF6, #2E1065)',
+            'linear-gradient(135deg, #EC4899, #500724)'
+        ];
+        let hash = 0;
+        for (let i = 0; i < name.length; i++) {
+            hash = name.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        return colors[Math.abs(hash) % colors.length];
+    }
 
     function createSystemMessage(text) {
         const div = document.createElement('div');
@@ -354,44 +771,53 @@
     }
 
     function createOtherMessage(msg, isConsecutive) {
-        const { id, user, text, time, replyTo } = msg;
+        const { id, user, text, time, replyTo, reactions = [] } = msg;
         const div = document.createElement('div');
         const isImage = text.includes('<img');
+        const isFile = text.includes('file-attachment');
         div.id = `msg-${id}`;
-        div.className = `flex flex-col ${isImage ? 'max-w-[280px]' : 'max-w-[85%]'} items-start ${isConsecutive ? 'mt-1' : 'mt-6'}`;
-        const bubbleRounding = isConsecutive ? 'rounded-2xl' : 'rounded-2xl rounded-tl-sm';
+        div.className = `flex flex-col gap-1 ${isConsecutive ? 'mt-1' : 'mt-6'} max-w-[85%]`;
+        const bubbleRounding = isConsecutive ? 'rounded-xl' : 'rounded-xl rounded-tl-[2px]';
         
         div.innerHTML = `
-            ${!isConsecutive ? `<span class="text-[10px] text-primary ml-1 mb-1.5 block font-bold transition-all">${user}</span>` : ''}
-            ${replyTo ? `
-                <div class="cursor-pointer bg-white/5 border-l-2 border-primary ml-1 mb-1 px-3 py-2 rounded-r-lg max-w-full opacity-90 shadow-sm hover:bg-white/10 transition-colors" onclick="scrollToMessage('${replyTo.id}')">
-                    <p class="text-[10px] font-bold text-primary uppercase tracking-wider flex items-center gap-1">
-                        <span class="material-symbols-outlined text-[12px]">reply</span> 
-                        ${replyTo.user === username ? 'You' : replyTo.user}
-                    </p>
-                    <p class="text-[11px] truncate text-on-surface-variant/90">${replyTo.text.includes('<img') ? '📷 Photo' : replyTo.text}</p>
-                </div>
-            ` : ''}
-            <div class="relative group w-full flex items-center">
-                <div class="slide-reply-indicator material-symbols-outlined">reply</div>
-                <div data-msg-id="${id}" data-user="${user}" 
-                     oncontextmenu="showContextMenu(event, this)" 
-                     onmousedown="startSlide(event, this)" 
-                     ontouchstart="handleTouchStart(event, this)"
-                     class="bubble-content ${isImage ? 'bg-surface-container-low/30 relative' : 'bg-surface-container-highest text-on-surface px-4 pt-3 pb-2'} ${bubbleRounding} overflow-hidden shadow-sm min-w-[70px] cursor-grab active:cursor-grabbing">
-                    ${isImage ? `
-                        <div class="cursor-pointer active:scale-[0.98] transition-all" onclick="openImageModal(this.querySelector('img').src)">
-                            ${text.replace('<img', `<img class="w-full max-h-[320px] object-contain bg-black/20 block" `)}
-                            <div class="absolute bottom-1.5 right-1.5 h-4.5 px-2 bg-black/50 backdrop-blur-md rounded-full flex items-center">
-                                <span class="text-[9px] text-white/90 font-medium tabular-nums uppercase tracking-wider leading-none">${time}</span>
+            <div class="flex flex-col items-start min-w-0">
+                ${!isConsecutive ? `<span class="text-[10px] text-primary ml-1 mb-1.5 block font-bold transition-all">${user}</span>` : ''}
+                ${replyTo ? `
+                    <div class="cursor-pointer bg-white/5 border-l-2 border-primary ml-1 mb-1 px-3 py-2 rounded-r-lg max-w-full opacity-90 shadow-sm hover:bg-white/10 transition-colors" onclick="scrollToMessage('${replyTo.id}')">
+                        <p class="text-[10px] font-bold text-primary uppercase tracking-wider flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[12px]">reply</span> 
+                            ${replyTo.user === username ? 'You' : replyTo.user}
+                        </p>
+                        <p class="text-[11px] truncate text-on-surface-variant/90">${replyTo.text.includes('<img') ? '📷 Photo' : replyTo.text}</p>
+                    </div>
+                ` : ''}
+                <div class="relative group w-full flex items-center">
+                    <div class="slide-reply-indicator material-symbols-outlined">reply</div>
+                    <div data-msg-id="${id}" data-user="${user}" data-sender="${user}"
+                         oncontextmenu="showContextMenu(event, this)" 
+                         onmousedown="startSlide(event, this)" 
+                         ontouchstart="handleTouchStart(event, this)"
+                         class="bubble-content ${isImage ? 'bg-surface-container-low/30 relative' : 'bg-surface-container-highest text-on-surface px-4 pt-3 pb-2'} ${bubbleRounding} overflow-hidden shadow-sm min-w-[70px] cursor-grab active:cursor-grabbing">
+                        ${isImage ? `
+                            <div class="cursor-pointer active:scale-[0.98] transition-all" onclick="openImageModal(this.querySelector('img').src)">
+                                ${text.replace('<img', `<img class="w-full max-h-[320px] object-contain bg-black/20 block" `)}
+                                <div class="absolute bottom-1.5 right-1.5 h-4.5 px-2 bg-black/50 backdrop-blur-md rounded-full flex items-center">
+                                    <span class="text-[9px] text-white/90 font-medium tabular-nums uppercase tracking-wider leading-none">${time}</span>
+                                </div>
                             </div>
-                        </div>
-                    ` : `
-                        <p class="text-[15px] leading-relaxed break-all whitespace-pre-wrap">${text}</p>
-                        <div class="flex justify-end mt-1 opacity-40">
-                            <span class="text-[9px] font-medium tabular-nums uppercase">${time}</span>
-                        </div>
-                    `}
+                        ` : isFile ? `
+                            ${text}
+                            <div class="flex justify-end mt-1 opacity-40">
+                                <span class="text-[9px] font-medium tabular-nums uppercase">${time}</span>
+                            </div>
+                        ` : `
+                            <p class="text-[15px] leading-relaxed break-all whitespace-pre-wrap">${text}</p>
+                            <div class="flex justify-end mt-1 opacity-40">
+                                <span class="text-[9px] font-medium tabular-nums uppercase">${time}</span>
+                            </div>
+                        `}
+                    </div>
+                    <div id="reactions-${id}" class="absolute -bottom-3 left-2 flex gap-1 z-10"></div>
                 </div>
             </div>
         `;
@@ -399,12 +825,13 @@
     }
 
     function createUserMessage(msg, isConsecutive) {
-        const { id, user, text, time, replyTo } = msg;
+        const { id, user, text, time, replyTo, reactions = [] } = msg;
         const div = document.createElement('div');
         const isImage = text.includes('<img');
+        const isFile = text.includes('file-attachment');
         div.id = `msg-${id}`;
         div.className = `flex flex-col ${isImage ? 'max-w-[280px]' : 'max-w-[85%]'} items-end ml-auto ${isConsecutive ? 'mt-1' : 'mt-6'}`;
-        const bubbleRounding = isConsecutive ? 'rounded-2xl' : 'rounded-2xl rounded-tr-sm';
+        const bubbleRounding = isConsecutive ? 'rounded-xl' : 'rounded-xl rounded-tr-[2px]';
 
         div.innerHTML = `
             ${replyTo ? `
@@ -417,7 +844,7 @@
                 </div>
             ` : ''}
             <div class="relative group w-full flex items-center justify-end">
-                <div data-msg-id="${id}" data-user="${user}" 
+                <div data-msg-id="${id}" data-user="${user}" data-sender="${user}"
                      oncontextmenu="showContextMenu(event, this)" 
                      onmousedown="startSlide(event, this)" 
                      ontouchstart="handleTouchStart(event, this)"
@@ -430,6 +857,12 @@
                                 <span class="material-symbols-outlined text-[11px] text-primary" style="font-variation-settings: 'FILL' 1;">done_all</span>
                             </div>
                         </div>
+                    ` : isFile ? `
+                        ${text}
+                        <div class="flex justify-end items-center gap-1.5 mt-1">
+                            <span class="text-[9px] text-white/70 font-medium tabular-nums uppercase">${time}</span>
+                            <span class="material-symbols-outlined text-[13px] text-white/80" style="font-variation-settings: 'FILL' 1;">done_all</span>
+                        </div>
                     ` : `
                         <p class="text-[15px] font-medium leading-relaxed break-all whitespace-pre-wrap">${text}</p>
                         <div class="flex justify-end items-center gap-1.5 mt-1">
@@ -438,6 +871,7 @@
                         </div>
                     `}
                 </div>
+                <div id="reactions-${id}" class="absolute -bottom-3 right-2 flex gap-1 z-10"></div>
                 <div class="slide-reply-indicator material-symbols-outlined !left-auto !right-[-40px]">reply</div>
             </div>
         `;
@@ -449,13 +883,13 @@
         div.id = `typing-${user}`;
         div.className = 'flex items-center gap-2 px-1 mb-6 mt-4 typing-indicator-animate';
         div.innerHTML = `
-            <div class="flex gap-2.5 items-center bg-surface-container-low/50 border border-outline-variant/10 px-4 py-2.5 rounded-full backdrop-blur-sm">
-            <span class="text-[10px] text-primary/90 font-bold uppercase tracking-wider">${user} is typing</span>
-            <div class="flex gap-1.5 items-center ml-1">
-                <div class="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-duration:1s]"></div>
-                <div class="w-1.5 h-1.5 bg-primary/60 rounded-full animate-bounce [animation-duration:1s] [animation-delay:0.15s]"></div>
-                <div class="w-1.5 h-1.5 bg-primary/30 rounded-full animate-bounce [animation-duration:1s] [animation-delay:0.3s]"></div>
-            </div>
+            <div class="flex gap-2.5 items-center bg-surface-container-low/50 px-4 py-2 rounded-full backdrop-blur-sm shadow-sm">
+                <span class="text-[10px] text-primary/90 font-bold uppercase tracking-wider">${user} is typing</span>
+                <div class="flex gap-1 items-center ml-1">
+                    <div class="w-1 h-1 bg-primary rounded-full animate-bounce [animation-duration:0.8s]"></div>
+                    <div class="w-1 h-1 bg-primary/60 rounded-full animate-bounce [animation-duration:0.8s] [animation-delay:0.1s]"></div>
+                    <div class="w-1 h-1 bg-primary/30 rounded-full animate-bounce [animation-duration:0.8s] [animation-delay:0.2s]"></div>
+                </div>
             </div>
         `;
         return div;
@@ -465,7 +899,8 @@
         chatContainer.scrollTop = chatContainer.scrollHeight;
     };
 
-    let lastSender = null;
+    // lastSender declaration moved to top
+
 
     const notificationSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3');
 
@@ -520,8 +955,14 @@
                 content.classList.add('opacity-40');
                 content.style.backgroundImage = 'none';
                 content.style.backgroundColor = 'transparent';
-                content.style.border = '1px dashed rgba(255,255,255,0.1)';
+                content.style.border = '1px dashed rgba(255,255,255,0.2)';
+                content.classList.remove('cursor-grab', 'active:cursor-grabbing');
+                content.removeAttribute('oncontextmenu');
+                content.removeAttribute('onmousedown');
+                content.removeAttribute('ontouchstart');
             }
+            const reactions = document.getElementById(`reactions-${id}`);
+            if(reactions) reactions.remove();
         }
     });
 
@@ -542,17 +983,179 @@
     socket.on('room_users', (users) => {
         const list = document.getElementById('users-list');
         list.innerHTML = '';
-        users.forEach(user => {
-            const li = document.createElement('li');
-            li.className = 'flex items-center gap-3 text-sm text-on-surface';
-            li.innerHTML = `
-                <div class="w-2 h-2 rounded-full bg-primary/80 shadow-[0_0_8px_rgba(183,132,167,0.6)]"></div>
-                ${user} ${user === username ? '<span class="text-on-surface-variant text-[10px] uppercase ml-1">(You)</span>' : ''}
-            `;
-            list.appendChild(li);
-        });
-        document.getElementById('header-subtitle').innerText = `${users.length} Online`;
+        
+        const renderList = (userArray) => {
+            userArray.forEach(user => {
+                const li = document.createElement('li');
+                li.className = 'flex items-center gap-3 text-sm text-on-surface py-1';
+                li.innerHTML = `
+                    <div class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(var(--primary-rgb),0.4)]"></div>
+                    <span class="font-medium">${user} ${user === username ? '<span class="text-on-surface-variant text-[10px] uppercase ml-1">(You)</span>' : ''}</span>
+                `;
+                list.appendChild(li);
+            });
+        };
+
+        if (Array.isArray(users)) {
+            renderList(users);
+        } else {
+            const onlineUsers = Object.entries(users)
+                .filter(([_, status]) => status === 'Online')
+                .map(([user, _]) => user);
+            renderList(onlineUsers);
+        }
+        updateStarIcons();
     });
+
+    socket.on('reaction', ({ msgId, emoji, user, action }) => {
+        const reactionsContainer = document.getElementById(`reactions-${msgId}`);
+        if (reactionsContainer) {
+            let existing = reactionsContainer.querySelector(`[data-emoji="${emoji}"]`);
+            if (action === 'remove') {
+                if (existing) {
+                    let count = parseInt(existing.getAttribute('data-count')) - 1;
+                    if (count <= 0) {
+                        existing.remove();
+                    } else {
+                        existing.setAttribute('data-count', count);
+                        existing.innerHTML = `${emoji} <span class="text-[9px] font-bold">${count}</span>`;
+                    }
+                }
+                return;
+            }
+            if (existing) {
+                let count = parseInt(existing.getAttribute('data-count')) + 1;
+                existing.setAttribute('data-count', count);
+                existing.innerHTML = `${emoji} <span class="text-[9px] font-bold">${count}</span>`;
+            } else {
+                const badge = document.createElement('div');
+                badge.className = 'bg-surface-container-highest/90 border border-white/10 px-2 py-0.5 rounded-full text-xs shadow-lg backdrop-blur-md reaction-pop-animate flex items-center gap-1 cursor-pointer hover:bg-white/20 transition-colors';
+                badge.setAttribute('data-emoji', emoji);
+                badge.setAttribute('data-count', '1');
+                badge.title = `Reacted by ${user}`;
+                badge.onclick = () => removeReaction(msgId, emoji);
+                badge.innerHTML = `${emoji} <span class="text-[9px] font-bold">1</span>`;
+                reactionsContainer.appendChild(badge);
+            }
+        }
+    });
+    
+    function removeReaction(msgId, emoji) {
+        socket.emit('reaction', { msgId, emoji, user: username, action: 'remove' });
+    }
+
+    socket.on('pin_message', ({ id, text, user }) => {
+        pinMessage(id, text, user);
+    });
+
+    socket.on('unpin_message', (id) => {
+        unpinMessageData(id);
+    });
+
+    function addReaction(emoji) {
+        socket.emit('reaction', { msgId: selectedMsgId, emoji, user: username });
+        hideContextMenu();
+    }
+
+    // Pinning Implementations
+    // pinnedMessages declaration moved to top
+
+
+    function handlePinAction() {
+        const msgEl = document.getElementById(`msg-${selectedMsgId}`);
+        const content = msgEl.querySelector('.bubble-content');
+        const p = content.querySelector('p');
+        const text = p ? p.innerText : '📷 Photo';
+        const user = content.getAttribute('data-sender') || 'User'; 
+        
+        const isPinned = pinnedMessages.some(m => m.id === selectedMsgId);
+        if (isPinned) {
+            socket.emit('unpin_message', selectedMsgId);
+        } else {
+            socket.emit('pin_message', { id: selectedMsgId, text, user });
+        }
+        hideContextMenu();
+    }
+
+    function setWallpaper(type) {
+        const container = chatContainer;
+        container.style.backgroundImage = '';
+        if (type === 'mesh') {
+             container.classList.add('chat-wallpaper-mesh');
+        } else {
+             container.classList.remove('chat-wallpaper-mesh');
+             const colors = {
+                 mauve: 'var(--primary)',
+                 blue: '#3B82F6',
+                 emerald: '#10B881'
+             };
+             container.style.backgroundImage = `radial-gradient(circle at 50% 50%, ${colors[type]}10 0%, transparent 60%)`;
+        }
+        showToast(`Wallpaper Updated to ${type}`);
+    }
+
+    function showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-24 left-1/2 -translate-x-1/2 bg-surface-container-highest border border-white/10 px-6 py-3 rounded-full text-xs font-bold text-primary shadow-2xl animate-in fade-in slide-in-from-top-4 z-[200]';
+        toast.innerText = message;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.classList.add('fade-out');
+            setTimeout(() => toast.remove(), 500);
+        }, 3000);
+    }
+
+    function pinMessage(id, text, user) {
+        if (!pinnedMessages.find(m => m.id === id)) {
+            pinnedMessages.push({ id, text, user });
+            updatePinnedUI();
+        }
+    }
+
+    function unpinMessageData(id) {
+        pinnedMessages = pinnedMessages.filter(m => m.id !== id);
+        updatePinnedUI();
+    }
+
+    function unpinCurrentMessage() {
+        if (pinnedMessages.length > 0) {
+            socket.emit('unpin_message', pinnedMessages[pinnedMessages.length - 1].id);
+        }
+    }
+
+    function updatePinnedUI() {
+        const bar = document.getElementById('pinned-message-bar');
+        const previewText = document.getElementById('pinned-preview-text');
+        const sidebarList = document.getElementById('pinned-list-sidebar');
+        const sidebarTitle = document.getElementById('pinned-section-title');
+
+        sidebarList.innerHTML = '';
+        if (pinnedMessages.length > 0) {
+            bar.classList.remove('hidden');
+            sidebarTitle.classList.remove('hidden');
+            const latest = pinnedMessages[pinnedMessages.length - 1];
+            previewText.innerText = latest.text;
+            bar.onclick = () => scrollToMessage(latest.id);
+
+            pinnedMessages.forEach(msg => {
+                const li = document.createElement('li');
+                li.className = 'bg-white/5 p-3 rounded-xl cursor-pointer hover:bg-white/10 transition-colors border border-white/5';
+                li.innerHTML = `
+                    <p class="text-[11px] text-on-surface line-clamp-2">${msg.text}</p>
+                    <p class="text-[9px] text-primary uppercase font-bold mt-1 tracking-wider">${msg.user}</p>
+                `;
+                li.onclick = (e) => {
+                    e.stopPropagation();
+                    scrollToMessage(msg.id);
+                    if (window.innerWidth < 768) closeSidebar();
+                };
+                sidebarList.appendChild(li);
+            });
+        } else {
+            bar.classList.add('hidden');
+            sidebarTitle.classList.add('hidden');
+        }
+    }
 
     socket.on('typing', ({ username: typer, isTyping }) => {
         if(typer === username) return;
@@ -566,22 +1169,18 @@
     });
 
     // Sub-menus
-    const sidebar = document.getElementById('users-sidebar');
-    const overlay = document.getElementById('sidebar-overlay');
-    document.getElementById('menu-btn').addEventListener('click', () => {
-        sidebar.classList.remove('-translate-x-full');
-        overlay.classList.remove('hidden');
-        setTimeout(() => overlay.classList.remove('opacity-0'), 10);
-    });
+    // sidebar/overlay declarations moved to top
+
+    // Sidebar menu toggle moved to initChat
 
     function updateNotifStatus() {
         const dot = document.getElementById('notif-status-dot');
         if (Notification.permission === 'granted') {
-            dot.className = 'w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]';
+            dot.className = 'w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(var(--primary-rgb),0.4)]';
         } else if (Notification.permission === 'denied') {
             dot.className = 'w-2 h-2 rounded-full bg-error shadow-[0_0_8px_rgba(239,68,68,0.4)]';
         } else {
-            dot.className = 'w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.4)]';
+            dot.className = 'w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(241,158,11,0.4)]';
         }
     }
 
@@ -601,40 +1200,101 @@
     updateNotifStatus();
 
     function closeSidebar() {
+        if (!sidebar || !overlay) return;
         sidebar.classList.add('-translate-x-full');
         overlay.classList.add('opacity-0');
         setTimeout(() => overlay.classList.add('hidden'), 300);
     }
-    document.getElementById('close-sidebar-btn').addEventListener('click', closeSidebar);
-    overlay.addEventListener('click', closeSidebar);
 
-    document.getElementById('exit-btn').addEventListener('click', () => window.location.href = '/');
 
     function scrollToMessage(id) {
         const el = document.getElementById(`msg-${id}`);
         if(el) {
             el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            el.classList.add('mauve-glow');
-            setTimeout(() => el.classList.remove('mauve-glow'), 2000);
+            el.classList.add('message-highlight');
+            setTimeout(() => el.classList.remove('message-highlight'), 2000);
+        }
+    }
+
+    // Scroll FAB logic moved to initChat
+
+
+    // Removed search implementation as per request
+
+    // Starring Implementation
+    // starredMessages declaration moved to top
+
+
+    function handleStarAction() {
+        const msgEl = document.getElementById(`msg-${selectedMsgId}`);
+        const content = msgEl.querySelector('.bubble-content');
+        if (starredMessages[selectedMsgId]) {
+            delete starredMessages[selectedMsgId];
+            showToast('Message Unstarred');
+        } else {
+            const p = content.querySelector('p');
+            const text = p ? p.innerText : '📷 Photo';
+            starredMessages[selectedMsgId] = {
+                id: selectedMsgId,
+                text: text,
+                user: content.getAttribute('data-sender') || 'User',
+                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+            };
+            showToast('Message Starred');
+        }
+        localStorage.setItem(`starred_${port}`, JSON.stringify(starredMessages));
+        updateStarIcons();
+    }
+
+    // starred modal declarations moved to top
+
+
+    // Starred messages toggle moved to initChat
+
+    function closeStarred() {
+        starredModal.classList.add('opacity-0');
+        starredContent.classList.add('scale-95');
+        setTimeout(() => starredModal.classList.add('hidden'), 300);
+    }
+
+    // Close-starred handlers moved to initChat
+
+
+    function updateStarIcons() {
+        const messages = document.querySelectorAll('[data-msg-id]');
+        messages.forEach(msg => {
+            const id = msg.getAttribute('data-msg-id');
+            const existingStar = msg.querySelector('.star-badge');
+            if (starredMessages[id]) {
+                if (!existingStar) {
+                    const star = document.createElement('span');
+                    star.className = 'star-badge material-symbols-outlined text-[10px] text-amber-400 absolute -top-1 -right-1 filled';
+                    star.innerText = 'star';
+                    star.style.fontVariationSettings = "'FILL' 1";
+                    msg.appendChild(star);
+                }
+            } else if (existingStar) {
+                existingStar.remove();
+            }
+        });
+    }
+
+    function clearLocalView() {
+        if(confirm('Clear all messages from your local view? (This does not affect other users)')) {
+            chatContainer.innerHTML = '';
+            showToast('Chat history cleared locally');
         }
     }
 
     // Context Menu & Reply Logic
-    let currentReplyTo = null;
-    let selectedMsgId = null;
-    const contextMenu = document.getElementById('context-menu');
-    const replyPreviewBar = document.getElementById('reply-preview-bar');
+    // reply/selectedMsgId declarations moved to top
+
+    // Context menu / reply bar declarations moved to top/initElements
+
 
     // Configuration Logic
-    let settings = {
-        primary: '#B784A7',
-        primaryContainer: '#4A223E',
-        primaryRgb: '183,132,167',
-        sounds: true,
-        volume: 0.5,
-        fontSize: 15,
-        radius: 1
-    };
+    // settings declaration moved to top
+
 
     function loadSettings() {
         const saved = localStorage.getItem('orka_settings');
@@ -671,10 +1331,27 @@
         document.getElementById('font-size-val').innerText = settings.fontSize + 'px';
         document.getElementById('radius-val').innerText = rad.name;
         document.getElementById('sounds-toggle').checked = settings.sounds;
+        document.getElementById('theme-toggle').checked = settings.darkMode;
         document.getElementById('volume-slider').value = settings.volume;
         document.getElementById('font-range').value = settings.fontSize;
         document.getElementById('radius-range').value = settings.radius;
         notificationSound.volume = settings.volume;
+
+        if (settings.darkMode) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    }
+
+    function toggleTheme(isDark) {
+        settings.darkMode = isDark;
+        if (isDark) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        saveSettings();
     }
 
     function setAccent(primary, container, rgb) {
@@ -724,7 +1401,8 @@
                 sounds: true,
                 volume: 0.5,
                 fontSize: 15,
-                radius: 1
+                radius: 1,
+                darkMode: true
             };
             applySettings();
             saveSettings();
@@ -732,16 +1410,10 @@
     }
 
     // Modal Control
-    const settingsModal = document.getElementById('settings-modal');
-    const settingsContent = document.getElementById('settings-content');
+    // settings modal declarations moved to top
+
     
-    document.getElementById('settings-btn').onclick = () => {
-        settingsModal.classList.remove('hidden');
-        setTimeout(() => {
-            settingsModal.classList.remove('opacity-0');
-            settingsContent.classList.remove('scale-95');
-        }, 10);
-    };
+    // Settings toggle moved to initChat
 
     function closeSettings() {
         settingsModal.classList.add('opacity-0');
@@ -749,10 +1421,11 @@
         setTimeout(() => settingsModal.classList.add('hidden'), 300);
     }
 
-    document.getElementById('close-settings').onclick = closeSettings;
-    settingsModal.onclick = (e) => { if (e.target === settingsModal) closeSettings(); };
+    // Close-settings handlers moved to initChat
 
-    loadSettings();
+
+    // loadSettings call moved to initChat flow
+
 
     function showContextMenu(e, el) {
         e.preventDefault();
@@ -760,8 +1433,30 @@
         const msgUser = el.getAttribute('data-user');
         const unsendBtn = document.getElementById('unsend-btn');
         const editBtn = document.getElementById('edit-btn');
+        const starIcon = document.getElementById('star-icon');
+        const starText = document.getElementById('star-text');
+        const pinIcon = document.getElementById('pin-icon');
+        const pinText = document.getElementById('pin-text');
         const isImage = el.classList.contains('bg-surface-container-low/30') || el.classList.contains('bg-primary/20');
         
+        // Star status
+        if (starredMessages[selectedMsgId]) {
+            starIcon.innerText = 'star_outline';
+            starText.innerText = 'Unstar';
+        } else {
+            starIcon.innerText = 'star';
+            starText.innerText = 'Star';
+        }
+
+        // Pin status
+        if (pinnedMessages.find(m => m.id === selectedMsgId)) {
+            pinIcon.innerText = 'push_pin_outline';
+            pinText.innerText = 'Unpin';
+        } else {
+            pinIcon.innerText = 'push_pin';
+            pinText.innerText = 'Pin';
+        }
+
         // Only show unsend and edit for own messages
         unsendBtn.classList.toggle('hidden', msgUser !== username);
         editBtn.classList.toggle('hidden', msgUser !== username || isImage);
@@ -825,8 +1520,8 @@
         }
     }
 
-    let isEditing = false;
-    let editingMsgId = null;
+    // editing state declarations moved to top
+
 
     function handleEditAction() {
         const msgEl = document.getElementById(`msg-${selectedMsgId}`);
@@ -977,39 +1672,15 @@
     document.getElementById('close-modal').onclick = closeImageModal;
     imageModal.onclick = (e) => { if(e.target === imageModal) closeImageModal(); };
 
-    document.getElementById('clear-chat-btn').addEventListener('click', () => {
-        if(confirm('Clear message history from your view?')) chatContainer.innerHTML = '';
-    });
 
 
 
-    document.getElementById('image-upload').addEventListener('change', function() {
-        if(this.files && this.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                socket.emit('send_message', { 
-                    text: `<img src="${e.target.result}" />`,
-                    replyTo: currentReplyTo 
-                });
-                cancelReply();
-            }
-            reader.readAsDataURL(this.files[0]);
-            this.value = ''; 
-        }
-    });
 
-    let typingTimer;
-    messageInput.addEventListener('input', () => {
-        // Auto-resize textarea
-        messageInput.style.height = 'auto';
-        messageInput.style.height = messageInput.scrollHeight + 'px';
-        
-        socket.emit('typing', true);
-        clearTimeout(typingTimer);
-        typingTimer = setTimeout(() => socket.emit('typing', false), 2000);
-    });
+    // typingTimer declaration moved to top
+
 
     function resetInput() {
+        if (!messageInput) return;
         messageInput.value = '';
         messageInput.style.height = 'auto';
         socket.emit('typing', false);
@@ -1034,11 +1705,67 @@
         }
     }
 
-    sendButton.addEventListener('mousedown', (e) => {
-        // Prevent button from taking focus which hides mobile keyboard
-        e.preventDefault();
-    });
-    sendButton.addEventListener('click', sendMessage);
+    function triggerFileInput(accept) {
+        if (mediaInputHidden) {
+            mediaInputHidden.accept = accept;
+            mediaInputHidden.click();
+        }
+    }
+
+    // Camera Features
+    const cameraModal = document.getElementById('camera-modal');
+    const cameraPreview = document.getElementById('camera-preview');
+    let stream = null;
+
+    async function openCamera() {
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            cameraPreview.srcObject = stream;
+            cameraModal.classList.remove('hidden');
+            setTimeout(() => {
+                cameraModal.classList.remove('opacity-0');
+            }, 10);
+            closeAttachmentMenu();
+        } catch (err) {
+            showToast('Camera Access Denied');
+        }
+    }
+
+    function closeCamera() {
+        if (!cameraModal) return;
+        cameraModal.classList.add('opacity-0');
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            stream = null;
+        }
+        setTimeout(() => cameraModal.classList.add('hidden'), 300);
+    }
+
+    if (document.getElementById('close-camera')) {
+        document.getElementById('close-camera').onclick = closeCamera;
+    }
+
+    if (document.getElementById('capture-photo')) {
+        document.getElementById('capture-photo').onclick = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = cameraPreview.videoWidth;
+            canvas.height = cameraPreview.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(cameraPreview, 0, 0);
+            
+            const photo = canvas.toDataURL('image/jpeg', 0.8);
+            const img = `<img src="${photo}" alt="Camera Capture" />`;
+            socket.emit('send_message', { text: img, replyTo: currentReplyTo });
+            
+            if (currentReplyTo) cancelReply();
+            closeCamera();
+            showToast('Photo Sent Directly');
+        };
+    }
+
+    // mediaInputHidden listener already handled in initChat
+
+
 
     // Handle mobile viewport resizing explicitly for older browsers
     if (window.visualViewport) {
