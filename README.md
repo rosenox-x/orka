@@ -2,6 +2,8 @@
 
 Orka is a high-performance, real-time messaging platform designed for secure, anonymous, and ephemeral communication. Built with a focus on privacy and a premium user experience, Orka leverages modern web standards to provide a seamless messaging environment across desktop and mobile devices.
 
+**Live Demo**: [https://orka-rmj6.onrender.com](https://orka-rmj6.onrender.com)
+
 ---
 
 ## Core Features
@@ -14,7 +16,7 @@ Orka is a high-performance, real-time messaging platform designed for secure, an
 ### Advanced Messaging Mechanics
 *   **Dynamic Customization Engine**: Real-time theme injection allowing users to customize accent colors (presets or hex), UI rounding, font sizes, and notification sounds.
 *   **Slide-to-Reply**: Gesture-based interaction system (touch and mouse) for seamless message threading.
-*   **Enhanced Media Handling**: Support for large media uploads (up to 50MB) with high-fidelity, click-to-zoom modal previews.
+*   **Enhanced Media Handling**: Support for large media uploads (up to 450MB) with high-fidelity, click-to-zoom modal previews.
 *   **Full Message Lifecycle Control**: Native support for message editing, "unsending" (deletion for all), and interactive nested replies.
 
 ### Real-Time Interaction
@@ -60,7 +62,7 @@ npm start
 By default, the application will be accessible at `http://localhost:3000`.
 
 ### 4. Configuration
-The server's memory buffer and port can be configured within `server.js`. The default message payload limit is currently set to **50MB**.
+The server's memory buffer and port can be configured within `server.js`. The default message payload limit is currently set to **450MB**.
 
 ---
 

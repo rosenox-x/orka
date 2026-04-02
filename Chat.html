@@ -204,8 +204,8 @@
 <!-- Sidebar Drawer -->
 <div id="users-sidebar" class="fixed inset-y-0 left-0 w-64 bg-surface-container-highest z-[60] transform -translate-x-full transition-transform duration-300 shadow-2xl flex flex-col">
     <div class="p-6 flex items-center justify-between h-20">
-        <h2 class="font-headline font-bold text-lg text-white">Online</h2>
-        <button id="close-sidebar-btn" class="text-[#ababab] hover:text-white transition-colors">
+        <h2 class="font-headline font-bold text-lg text-on-surface">Online</h2>
+        <button id="close-sidebar-btn" class="text-on-surface-variant hover:text-on-surface transition-colors">
             <span class="material-symbols-outlined">close</span>
         </button>
     </div>
@@ -216,10 +216,10 @@
         <h3 id="pinned-section-title" class="hidden text-[10px] font-bold text-primary uppercase tracking-widest mb-4">Pinned Messages</h3>
         <ul id="pinned-list-sidebar" class="space-y-3"></ul>
     </div>
-    <div class="p-6 bg-black/20">
+    <div class="p-6 bg-surface-container-high/50">
         <h3 class="text-[10px] font-bold text-primary uppercase tracking-widest mb-4">Saved Content</h3>
         <button id="starred-messages-btn" class="w-full flex items-center gap-3 text-sm text-on-surface hover:text-primary transition-colors mb-6 group">
-            <span class="material-symbols-outlined text-[#ababab] group-hover:text-primary transition-colors">star</span>
+            <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">star</span>
             <span>Starred Messages</span>
         </button>
 
@@ -246,7 +246,7 @@
         <h3 class="text-[10px] font-bold text-primary uppercase tracking-widest mb-4">Settings</h3>
         <button id="notification-toggle" class="w-full flex items-center justify-between group">
             <div class="flex items-center gap-3">
-                <span class="material-symbols-outlined text-[#ababab] group-hover:text-primary transition-colors">notifications</span>
+                <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">notifications</span>
                 <span class="text-sm text-on-surface">Push Notifications</span>
             </div>
             <div id="notif-status-dot" class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(var(--primary-rgb),0.4)]"></div>
@@ -264,7 +264,7 @@
                 <p id="pinned-preview-text" class="text-xs text-on-surface font-medium truncate"></p>
                 <p class="text-[9px] text-on-surface-variant uppercase tracking-wider">Pinned Message</p>
             </div>
-            <button onclick="unpinCurrentMessage()" class="text-[#ababab] hover:text-white">
+            <button onclick="unpinCurrentMessage()" class="text-on-surface-variant hover:text-on-surface">
                 <span class="material-symbols-outlined text-lg">close</span>
             </button>
         </div>
@@ -299,15 +299,15 @@
 </div>
 <!-- Attachment Menu -->
 <div id="attachment-menu" class="fixed bottom-24 left-10 z-[100] hidden flex flex-col bg-surface-container-highest/95 backdrop-blur-xl rounded-3xl shadow-2xl p-2 w-52 opacity-0 -translate-y-4 scale-95 origin-bottom-left transition-all duration-200">
-    <button onclick="openCamera()" class="flex items-center gap-4 px-4 py-3 text-sm font-medium text-white hover:bg-white/10 rounded-2xl transition-all group">
+    <button onclick="openCamera()" class="flex items-center gap-4 px-4 py-3 text-sm font-medium text-on-surface hover:bg-surface-container-highest/20 rounded-2xl transition-all group">
         <span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">photo_camera</span>
         <span>Camera</span>
     </button>
-    <button onclick="triggerFileInput('image/*')" class="flex items-center gap-4 px-4 py-3 text-sm font-medium text-white hover:bg-white/10 rounded-2xl transition-all group">
+    <button onclick="triggerFileInput('image/*')" class="flex items-center gap-4 px-4 py-3 text-sm font-medium text-on-surface hover:bg-surface-container-highest/20 rounded-2xl transition-all group">
         <span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">image</span>
         <span>Images</span>
     </button>
-    <button onclick="triggerFileInput('*/*')" class="flex items-center gap-4 px-4 py-3 text-sm font-medium text-white hover:bg-white/10 rounded-2xl transition-all group">
+    <button onclick="triggerFileInput('*/*')" class="flex items-center gap-4 px-4 py-3 text-sm font-medium text-on-surface hover:bg-surface-container-highest/20 rounded-2xl transition-all group">
         <span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">attachment</span>
         <span>Files</span>
     </button>
@@ -316,15 +316,15 @@
 <div id="starred-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center bg-black/60 backdrop-blur-md transition-all duration-300 opacity-0 p-4">
     <div id="starred-content" class="w-full max-w-lg bg-surface-container-high rounded-3xl shadow-2xl flex flex-col scale-95 transition-transform duration-300 overflow-hidden max-h-[85dvh]">
         <div class="p-6 flex items-center justify-between">
-            <h2 class="font-headline font-bold text-xl text-white">Starred Messages</h2>
-            <button id="close-starred" class="text-[#ababab] hover:text-white p-2 rounded-full hover:bg-white/5 transition-colors">
+            <h2 class="font-headline font-bold text-xl text-on-surface">Starred Messages</h2>
+            <button id="close-starred" class="text-on-surface-variant hover:text-on-surface p-2 rounded-full hover:bg-surface-container-highest/20 transition-colors">
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
         <div id="starred-list-modal" class="p-6 flex-1 overflow-y-auto custom-scrollbar space-y-4">
             <!-- Pinned messages list will go here -->
         </div>
-        <div class="p-6 bg-black/40 text-center">
+        <div class="p-6 bg-surface-container-high/50 text-center">
             <p class="text-[10px] text-on-surface-variant uppercase tracking-widest">Your Private Collection</p>
         </div>
     </div>
@@ -333,8 +333,8 @@
 <div id="settings-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center bg-black/60 backdrop-blur-md transition-all duration-300 opacity-0 p-4">
     <div id="settings-content" class="w-full max-w-lg bg-surface-container-high rounded-3xl shadow-2xl flex flex-col scale-95 transition-transform duration-300 overflow-hidden max-h-[90dvh]">
         <div class="p-6 flex items-center justify-between">
-            <h2 class="font-headline font-bold text-xl text-white">App Customization</h2>
-            <button id="close-settings" class="text-[#ababab] hover:text-white p-2 rounded-full hover:bg-white/5 transition-colors">
+            <h2 class="font-headline font-bold text-xl text-on-surface">App Customization</h2>
+            <button id="close-settings" class="text-on-surface-variant hover:text-on-surface p-2 rounded-full hover:bg-surface-container-highest/20 transition-colors">
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
@@ -405,8 +405,7 @@
                 </div>
             </section>
         </div>
-        </div>
-        <div class="p-6 bg-black/40 flex flex-col gap-3">
+        <div class="p-6 bg-surface-container-low/50 flex flex-col gap-3">
             <button onclick="clearLocalView()" class="w-full py-2.5 rounded-xl text-error text-xs font-bold uppercase tracking-widest hover:bg-error/5 transition-colors active:scale-[0.98]">Clear Local View</button>
             <button onclick="resetToDefaults()" class="w-full py-2.5 rounded-xl text-primary text-xs font-bold uppercase tracking-widest hover:bg-primary/5 transition-colors active:scale-[0.98]">Reset to Defaults</button>
             <p class="text-[9px] text-on-surface-variant tracking-wider text-center">Changes are saved automatically to your browser.</p>
@@ -415,29 +414,29 @@
 </div>
 <!-- Context Menu -->
 <div id="context-menu" class="fixed z-[100] hidden flex flex-col bg-surface-container-highest/95 backdrop-blur-xl rounded-2xl shadow-2xl p-1 w-44 opacity-0 scale-95 origin-top-left bubble-context-menu">
-    <button onclick="handleReplyAction()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-white hover:bg-white/10 rounded-xl transition-colors">
-        <span class="material-symbols-outlined text-lg text-white/70">reply</span> Reply
+    <button onclick="handleReplyAction()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-on-surface hover:bg-surface-container-highest/20 rounded-xl transition-colors">
+        <span class="material-symbols-outlined text-lg text-on-surface-variant">reply</span> Reply
     </button>
-    <button onclick="handlePinAction()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-white hover:bg-white/10 rounded-xl transition-colors">
-        <span id="pin-icon" class="material-symbols-outlined text-lg text-white/70">push_pin</span> <span id="pin-text">Pin</span>
+    <button onclick="handlePinAction()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-on-surface hover:bg-surface-container-highest/20 rounded-xl transition-colors">
+        <span id="pin-icon" class="material-symbols-outlined text-lg text-on-surface-variant">push_pin</span> <span id="pin-text">Pin</span>
     </button>
-    <div class="px-3 py-2 flex items-center justify-around bg-white/5 mx-1 rounded-xl mb-1">
+    <div class="px-3 py-2 flex items-center justify-around bg-surface-container-highest/10 mx-1 rounded-xl mb-1">
         <button onclick="addReaction('👍')" class="hover:scale-125 transition-transform">👍</button>
         <button onclick="addReaction('❤️')" class="hover:scale-125 transition-transform">❤️</button>
         <button onclick="addReaction('😂')" class="hover:scale-125 transition-transform">😂</button>
         <button onclick="addReaction('😮')" class="hover:scale-125 transition-transform">😮</button>
         <button onclick="addReaction('🔥')" class="hover:scale-125 transition-transform">🔥</button>
     </div>
-    <button onclick="handleStarAction()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-white hover:bg-white/10 rounded-xl transition-colors">
+    <button onclick="handleStarAction()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-on-surface hover:bg-surface-container-highest/20 rounded-xl transition-colors">
         <span id="star-icon" class="material-symbols-outlined text-lg">star</span> <span id="star-text">Star</span>
     </button>
-    <button onclick="handleCopyAction()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-white hover:bg-white/10 rounded-xl transition-colors">
-        <span class="material-symbols-outlined text-lg text-white/70">content_copy</span> Copy
+    <button onclick="handleCopyAction()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-on-surface hover:bg-surface-container-highest/20 rounded-xl transition-colors">
+        <span class="material-symbols-outlined text-lg text-on-surface-variant">content_copy</span> Copy
     </button>
-    <button id="edit-btn" onclick="handleEditAction()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-white hover:bg-white/10 rounded-xl transition-colors">
-        <span class="material-symbols-outlined text-lg text-white/70">edit</span> Edit
+    <button id="edit-btn" onclick="handleEditAction()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-on-surface hover:bg-surface-container-highest/20 rounded-xl transition-colors">
+        <span class="material-symbols-outlined text-lg text-on-surface-variant">edit</span> Edit
     </button>
-    <button id="unsend-btn" onclick="handleUnsendAction()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors">
+    <button id="unsend-btn" onclick="handleUnsendAction()" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-rose-500 hover:bg-rose-500/10 rounded-xl transition-colors">
         <span class="material-symbols-outlined text-lg">delete</span> Unsend
     </button>
 </div>
@@ -449,7 +448,7 @@
             <p class="text-[10px] font-bold text-primary uppercase tracking-wider mb-0.5">Editing Message</p>
             <p id="edit-text" class="text-[13px] text-on-surface-variant truncate"></p>
         </div>
-        <button onclick="cancelEdit()" class="text-[#ababab] hover:text-white p-1">
+        <button onclick="cancelEdit()" class="text-on-surface-variant hover:text-on-surface p-1">
             <span class="material-symbols-outlined text-lg">close</span>
         </button>
     </div>
@@ -460,7 +459,7 @@
             <p id="reply-user" class="text-[10px] font-bold text-primary uppercase tracking-wider mb-0.5">Alice</p>
             <p id="reply-text" class="text-[13px] text-on-surface-variant truncate">How are you doing?</p>
         </div>
-        <button onclick="cancelReply()" class="text-[#ababab] hover:text-white p-1">
+        <button onclick="cancelReply()" class="text-on-surface-variant hover:text-on-surface p-1">
             <span class="material-symbols-outlined text-lg">close</span>
         </button>
     </div>
@@ -783,12 +782,12 @@
             <div class="flex flex-col items-start min-w-0">
                 ${!isConsecutive ? `<span class="text-[10px] text-primary ml-1 mb-1.5 block font-bold transition-all">${user}</span>` : ''}
                 ${replyTo ? `
-                    <div class="cursor-pointer bg-white/5 border-l-2 border-primary ml-1 mb-1 px-3 py-2 rounded-r-lg max-w-full opacity-90 shadow-sm hover:bg-white/10 transition-colors" onclick="scrollToMessage('${replyTo.id}')">
+                    <div class="cursor-pointer bg-on-surface-variant/10 border-l-2 border-primary ml-1 mb-1 px-3 py-2 rounded-r-lg max-w-full opacity-90 shadow-sm hover:bg-on-surface-variant/20 transition-colors" onclick="scrollToMessage('${replyTo.id}')">
                         <p class="text-[10px] font-bold text-primary uppercase tracking-wider flex items-center gap-1">
                             <span class="material-symbols-outlined text-[12px]">reply</span> 
                             ${replyTo.user === username ? 'You' : replyTo.user}
                         </p>
-                        <p class="text-[11px] truncate text-on-surface-variant/90">${replyTo.text.includes('<img') ? '📷 Photo' : replyTo.text}</p>
+                        <p class="text-[11px] truncate text-on-surface">${replyTo.text.includes('<img') ? '📷 Photo' : replyTo.text}</p>
                     </div>
                 ` : ''}
                 <div class="relative group w-full flex items-center">
@@ -835,12 +834,12 @@
 
         div.innerHTML = `
             ${replyTo ? `
-                <div class="cursor-pointer bg-white/5 border-r-2 border-white/30 mr-1 mb-1 px-3 py-2 rounded-l-lg max-w-full text-right opacity-90 shadow-sm hover:bg-white/10 transition-colors" onclick="scrollToMessage('${replyTo.id}')">
-                    <p class="text-[10px] font-bold text-white/80 uppercase tracking-wider flex items-center justify-end gap-1">
+                <div class="cursor-pointer bg-on-primary/10 border-r-2 border-on-primary/30 mr-1 mb-1 px-3 py-2 rounded-l-lg max-w-full text-right opacity-90 shadow-sm hover:bg-on-primary/20 transition-colors" onclick="scrollToMessage('${replyTo.id}')">
+                    <p class="text-[10px] font-bold text-on-primary/80 uppercase tracking-wider flex items-center justify-end gap-1">
                         ${replyTo.user === username ? 'You' : replyTo.user}
                         <span class="material-symbols-outlined text-[12px]">reply</span>
                     </p>
-                    <p class="text-[11px] truncate text-white/60">${replyTo.text.includes('<img') ? '📷 Photo' : replyTo.text}</p>
+                    <p class="text-[11px] truncate text-on-primary/70">${replyTo.text.includes('<img') ? '📷 Photo' : replyTo.text}</p>
                 </div>
             ` : ''}
             <div class="relative group w-full flex items-center justify-end">
@@ -848,26 +847,26 @@
                      oncontextmenu="showContextMenu(event, this)" 
                      onmousedown="startSlide(event, this)" 
                      ontouchstart="handleTouchStart(event, this)"
-                     class="bubble-content ${isImage ? 'bg-primary/20 relative' : 'bg-primary text-white px-4 pt-3 pb-2'} ${bubbleRounding} overflow-hidden shadow-[0_4px_16px_rgba(var(--primary-rgb),0.1)] min-w-[85px] cursor-grab active:cursor-grabbing">
+                     class="bubble-content ${isImage ? 'bg-primary/20 relative' : 'bg-primary text-on-primary px-4 pt-3 pb-2'} ${bubbleRounding} overflow-hidden shadow-[0_4px_16px_rgba(var(--primary-rgb),0.1)] min-w-[85px] cursor-grab active:cursor-grabbing">
                     ${isImage ? `
                         <div class="cursor-pointer active:scale-[0.98] transition-all" onclick="openImageModal(this.querySelector('img').src)">
                             ${text.replace('<img', `<img class="w-full max-h-[320px] object-contain bg-black/20 block" `)}
-                            <div class="absolute bottom-1.5 right-1.5 h-4.5 px-2 bg-black/50 backdrop-blur-md rounded-full flex items-center gap-1.5">
-                                <span class="text-[9px] text-white/90 font-medium tabular-nums uppercase tracking-wider leading-none">${time}</span>
+                            <div class="absolute bottom-1.5 right-1.5 h-4.5 px-2 bg-on-surface/50 backdrop-blur-md rounded-full flex items-center gap-1.5">
+                                <span class="text-[9px] text-surface font-medium tabular-nums uppercase tracking-wider leading-none">${time}</span>
                                 <span class="material-symbols-outlined text-[11px] text-primary" style="font-variation-settings: 'FILL' 1;">done_all</span>
                             </div>
                         </div>
                     ` : isFile ? `
                         ${text}
                         <div class="flex justify-end items-center gap-1.5 mt-1">
-                            <span class="text-[9px] text-white/70 font-medium tabular-nums uppercase">${time}</span>
-                            <span class="material-symbols-outlined text-[13px] text-white/80" style="font-variation-settings: 'FILL' 1;">done_all</span>
+                            <span class="text-[9px] text-on-primary/70 font-medium tabular-nums uppercase">${time}</span>
+                            <span class="material-symbols-outlined text-[13px] text-on-primary/80" style="font-variation-settings: 'FILL' 1;">done_all</span>
                         </div>
                     ` : `
                         <p class="text-[15px] font-medium leading-relaxed break-all whitespace-pre-wrap">${text}</p>
                         <div class="flex justify-end items-center gap-1.5 mt-1">
-                            <span class="text-[9px] text-white/70 font-medium tabular-nums uppercase">${time}</span>
-                            <span class="material-symbols-outlined text-[13px] text-white/80" style="font-variation-settings: 'FILL' 1;">done_all</span>
+                            <span class="text-[9px] text-on-primary/70 font-medium tabular-nums uppercase">${time}</span>
+                            <span class="material-symbols-outlined text-[13px] text-on-primary/80" style="font-variation-settings: 'FILL' 1;">done_all</span>
                         </div>
                     `}
                 </div>
@@ -1029,7 +1028,7 @@
                 existing.innerHTML = `${emoji} <span class="text-[9px] font-bold">${count}</span>`;
             } else {
                 const badge = document.createElement('div');
-                badge.className = 'bg-surface-container-highest/90 border border-white/10 px-2 py-0.5 rounded-full text-xs shadow-lg backdrop-blur-md reaction-pop-animate flex items-center gap-1 cursor-pointer hover:bg-white/20 transition-colors';
+                badge.className = 'bg-surface-container-highest/90 border border-on-surface/10 px-2 py-0.5 rounded-full text-xs shadow-lg backdrop-blur-md reaction-pop-animate flex items-center gap-1 cursor-pointer hover:bg-on-surface/20 transition-colors';
                 badge.setAttribute('data-emoji', emoji);
                 badge.setAttribute('data-count', '1');
                 badge.title = `Reacted by ${user}`;
